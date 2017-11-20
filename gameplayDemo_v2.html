@@ -1,234 +1,344 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en-CA">
 	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<title>Merc TT Demo</title>
 		<style>
 			body { width:1920px; height:1080px;font-size:0;font-family:Arial,Helvetica,Sans; }
 			body, div, button { margin:0;padding:0; }
-            
-            #gamePlay { position:relative;width:100%;height:100%;background:green }
-            
-            canvas { height:100%;width:100%;background:#33CC33 }
-            .dialog { position:absolute;background-color:rgba(0,0,0,0.7);border-radius:50px;padding:50px; }
-            #dialog1 { top:10%;left:10%;height:calc(80% - 100px);width:calc(80% - 100px); }
-            #dialog2 { bottom:30%;right:30%;height:calc(40% - 100px);width:calc(40% - 100px);display:none; }
-
-			#topPanel { height:20%;width:100%;background:red }
-			#topPanel div { font-size:14pt; display:inline-block;height:100%;vertical-align:top; }
-			#topPanel div span { display:block;transform-origin:10% 90%;transform:rotate(90deg); }
-
-            #battleMenu { height:calc(80% - 40px);width:calc(100% - 40px);font-size:14pt;padding:20px;position:relative }
-            .characterMenu, .skillOverlay, .characterReady { position:absolute;top:0;height:100%;width:50%; }
-            .active1, #skillOverlay1, #characterReady1 { left:0;background-color:blue; }
-            .active2, #skillOverlay2, #characterReady2 { left:50%;background-color:aquamarine; }
-            .inactive { visibility:hidden }
-            
-            .abilities { background-color:#ffffff;padding:20px;text-align:center; }
-            button { display:block;height:1.8em;width:auto;font-size:2.5em;margin:0.1em;border:none;border-radius:15%;background-color:#000000;color:#ffffff;padding:5%;line-height:0.4em }
 			
-            #battleLog { font-size:12pt;padding:2px;height:auto;background-color:#000000;color:yellow;font-family:monospace; }
+			#gamePlay { position:relative;width:100%;height:100%;background:green }
+			
+			canvas { height:100%;width:100%;background:#33CC33 }
+			.dialog { position:absolute;background-color:rgba(0,0,0,0.7);border-radius:50px;padding:50px; }
+			#dialog1 { top:10%;left:10%;height:calc(80% - 100px);width:calc(80% - 100px); }
+			#dialog2 { bottom:30%;right:30%;height:calc(40% - 100px);width:calc(40% - 100px);display:none; }
+
+			#topPanel { height:20%;width:100%;background:red; }
+			#topPanel img { height:100%;width:20%; }
+			#topPanel div { height:100%;width:30%;display:inline-block;text-align:center;vertical-align:top;font-size:14pt; }
+			#timeout { display:block;font-size:5em;margin:5% auto;font-weight:bold;background-color:purple; }
+			#topPanel button { margin:5% auto; }
+
+			#battleMenu { height:calc(80% - 40px);width:calc(100% - 40px);font-size:14pt;padding:20px;position:relative }
+			.characterMenu, .skillOverlay, .characterReady { position:absolute;top:0;height:100%;width:50%; }
+			.active1, #skillOverlay1, #characterReady1 { left:0;background-color:blue; }
+			.active2, #skillOverlay2, #characterReady2 { left:50%;background-color:aquamarine; }
+			.inactive { visibility:hidden }
+			
+			.abilities { padding:20px;text-align:center; }
+
+			.skillDesc { font-size:1.5em;margin:10px 20px 5px 20px;padding:10px;height:22%;background-color:#ffffff;border-radius:10px; }
+			.skillDesc strong { text-transform:uppercase; }
+
+			.characterReady { background-size:100%;background-repeat:no-repeat; }
+			.characterAction { margin:20px;font-size:3em;font-weight:bold;text-align:center;line-height:1.6em; }
+			
+			button { display:block;height:1.8em;width:auto;font-size:2.5em;margin:0.1em;border:none;border-radius:8%;background-color:#000000;color:#ffffff;padding:5%;line-height:0.4em;margin:3% auto; }
+			button[disabled] { background-color:grey }
+			
+			button.selected { color:gold; }
+			button.selected:before { content:'\2713 ';color:gold; }
+			
+			#battleLog { font-size:12pt;padding:2px;height:auto;background-color:#000000;color:yellow;font-family:monospace; }
 
 			dt { font-weight:bold }
-            
-            #tabMenu { font-size:12pt }
+			
+			#tabMenu { font-size:12pt }
 		</style>
-        <script>
-                var characters =
-                {
-                    character1 :
-                    {
-                        name : "Big Sword Guy",
-                        image : "bsg.png",
-                        skills :
-                        [
-                             { name : "Sword Chop", selected : false, desc : "single target attack that deals damage." },
-                             { name : "Sweeping Strike", selected : false, desc : "AoE attack hitting both active enemy mercs." },
-                             { name : "Defensive Stance", selected : false, desc : "blocks incoming damage for the round." },
-                             { name : "Focus", selected : false, desc : "strengthens the attack stat until big sword guy is swapped to an inactive state, or dies." }
-                         ],
-                         target : null
-                    },
-                    character2 :
-                    {
-                        name : "Sniper Girl",
-                        image : "snipergirl.png",
-                        skills :
-                        [
-                             { name : "Headshot", selected : false, desc : "High damage single-target attack with a high chance of missing." },
-                             { name : "Ricochet Shot", selected : false, desc : "Medium damage to both frontline targets. High chance of missing. Critical hit results in Penetrating Shot that causes bleeding." },
-                             { name : "Take Aim", selected : false, desc : "Increases accuracy for next turn." },
-                             { name : "Camouflage", selected : false, desc : "Become harder to hit for next three turns. Effect is lost if Headshot or Ricochet Shot is used before the enemy attacks." }
-                        ],
-                        target : null
-                    },
-                    character3 : {
-                        name : "Mage",
-                        image : "mage.png",
-                        skills :
-                        [
-                             { name : "Fireball", selected : false, desc : "Medium damage single-target attack. Low chance of causing burn." },
-                             { name : "Lightning Storm", selected : false, desc : "Low damage to both frontline targets. Low chance of causing Stun." },
-                             { name : "Divine Shield", selected : false, desc : "Prevents next attack from damaging work. Cannot be used twice in a row by same merc." },
-                             { name : "Pool Mana", selected : false, desc : "Increases attack power significantly for next turn." }
-                        ],
-                        target : null
-                    }
-                };
-        
-                window.onload = function()
-                {
-                    var btns = null;
-                    for(var c in characters)
-                    {
-                        btns = document.querySelectorAll("#" + c + " button");
-                        for(var i = 0; i < characters[c].skills.length; i++)
-                        {
-                            btns[i].innerHTML = characters[c].skills[i].name;
-                            btns[i].onclick = function()
-                            {
-                                var character = this.parentElement.parentElement;
-                                var index = Array.prototype.indexOf.call(this.parentElement.children, this);
-                                var isActive1 = character.classList.contains("active1");
+		<script>
+			var intv = null;
 
-                                showSkill(characters[character.id], index, isActive1);
-                            };
-                        }
-                    }
-                }
-        
-            function showSkill(character, index, pos)
-            {
-                var overlay = document.getElementById("skillOverlay" + (pos ? 1 : 2));
-                overlay.style.visibility = "visible";
-                                                      
-                overlay.querySelector(".skillDesc").innerHTML = "<strong>" + character.skills[index].name + "</strong><br />" + character.skills[index].desc;
-                
-                var btns = overlay.querySelectorAll("button")
-                btns[0].onclick = function() { showReady(character, index, pos, 1); };
-                btns[1].onclick = function() { showReady(character, index, pos, 2); };
-                btns[2].onclick = function() { overlay.style.visibility = "hidden"; };
-            }
-        
-        function showReady(character, index, pos, target)
-        {
-            character.skills[index].selected = true;
-            character.target = target;
-            
-            var overlay = document.getElementById("characterReady" + (pos ? 1 : 2));
-            overlay.style.visibility = "visible";
-            
-            overlay.querySelector("img").src = character.image;
-            
-            overlay.querySelector("button").onclick = function()
-            {
-                character.skills[index].selected = false;
-                character.target = null;
-                overlay.style.visibility = "hidden";
-            };
-        }
-        </script>
+			var characters =
+			{
+				character1 :
+				{
+					name : "Big Sword Guy",
+					image : "bigsword.png",
+					skills :
+					[
+						 { name : "Sword Chop", selected : false, desc : "Single target attack that deals damage." },
+						 { name : "Sweeping Strike", selected : false, desc : "AoE attack hitting both active enemy mercs." },
+						 { name : "Defensive Stance", selected : false, desc : "Blocks incoming damage for the round." },
+						 { name : "Focus", selected : false, desc : "Strengthens the attack stat until big sword guy is swapped to an inactive state, or dies." }
+					 ],
+					 retreat : false,
+					 target : null
+				},
+				character2 : {
+					name : "Mage",
+					image : "witch.png",
+					skills :
+					[
+						 { name : "Fireball", selected : false, desc : "Medium damage single-target attack. Low chance of causing burn." },
+						 { name : "Lightning Storm", selected : false, desc : "Low damage to both frontline targets. Low chance of causing Stun." },
+						 { name : "Divine Shield", selected : false, desc : "Prevents next attack from damaging work. Cannot be used twice in a row by same merc." },
+						 { name : "Pool Mana", selected : false, desc : "Increases attack power significantly for next turn." }
+					],
+					retreat : false,
+					target : null
+				},
+				character3 :
+				{
+					name : "Sniper Girl",
+					image : "snipergirl.png",
+					skills :
+					[
+						 { name : "Headshot", selected : false, desc : "High damage single-target attack with a high chance of missing." },
+						 { name : "Ricochet Shot", selected : false, desc : "Medium damage to both frontline targets. High chance of missing. Critical hit results in Penetrating Shot that causes bleeding." },
+						 { name : "Take Aim", selected : false, desc : "Increases accuracy for next turn." },
+						 { name : "Camouflage", selected : false, desc : "Become harder to hit for next three turns. Effect is lost if Headshot or Ricochet Shot is used before the enemy attacks." }
+					],
+					retreat : false,
+					target : null
+				}
+
+			};
+	
+			window.onload = function()
+			{
+				var btns = null;
+				for(var c in characters)
+				{
+					btns = document.querySelectorAll("#" + c + " button");
+					for(var i = 0; i < btns.length; i++)
+					{
+						btns[i].innerHTML = (i == characters[c].skills.length ? "Retreat" : characters[c].skills[i].name);
+						btns[i].onclick = function()
+						{
+							var btns = this.parentElement.querySelectorAll("button");
+							for(var j = 0; j < btns.length; j++)
+							{
+								btns[j].className = (btns[j] == this ? "selected" : "");
+							}
+
+							var character = this.parentElement.parentElement;
+							var index = Array.prototype.indexOf.call(this.parentElement.children, this);
+							var isActive1 = character.classList.contains("active1");
+
+							if(index == btns.length - 1)
+							{
+								retreat(characters[character.id], index, isActive1);
+							}
+							else
+							{
+								showSkill(characters[character.id], index, isActive1);
+							}
+						};
+					}
+				}
+
+				intv = setInterval("countdown()", 1000);				
+			}
+
+			function countdown()
+			{
+				var t = document.getElementById('timeout');
+				var r = parseInt(t.innerHTML.substring(3));
+				r--;
+
+				if(r > -1)
+				{
+					t.innerHTML = "00:" + (r < 10 ? "0" : "") + r;
+				}
+				else
+				{
+					clearInterval(intv);
+
+					var s = document.querySelectorAll(".characterMenu");
+					for(var i = 0; i < s.length; i++)
+					{
+						if(!s[i].classList.contains("inactive"))
+						{
+							for(var j = 0; j < characters[s[i].id].skills.length; j++)
+							{
+								if(characters[s[i].id].skills[j].selected)
+								{
+									break;
+								}
+								else
+								{
+									characters[s[i].id].skills[j].selected = (j == 0);
+								}
+							}
+							characters[s[i].id].target = 1;
+						}
+					}
+					commit();
+				}		
+			}
+		
+			function showSkill(character, index, pos)
+			{
+				var overlay = document.getElementById("skillOverlay" + (pos ? 1 : 2));
+				overlay.classList.toggle("inactive");
+													  
+				overlay.querySelector(".skillDesc").innerHTML = "<strong>" + character.skills[index].name + "</strong><br />" + character.skills[index].desc;
+				
+				var btns = overlay.querySelectorAll("button")
+				btns[0].onclick = function() { showReady(character, index, pos, 1); };
+				btns[1].onclick = function() { showReady(character, index, pos, 2); };
+				btns[2].onclick = function() { overlay.classList.toggle("inactive"); };
+			}
+
+			function retreat(character, index, pos)
+			{
+				var b = (pos ? "#character1 " : "#character2") + " button:last-child";
+				var s = (pos ? "#character2 " : "#character1") + " button:last-child";
+				
+				var btn = document.querySelector(s);
+				btn.disabled = !character.retreat;				
+
+				character.retreat = !character.retreat;
+				if(!character.retreat) 
+				{
+					document.querySelector(b).classList.remove("selected");
+				}
+				else
+				{
+					showReady(character, index, pos, -1);
+				}
+			}
+		
+			function showReady(character, index, pos, target)
+			{
+				if(target != -1)
+				{
+					character.skills[index].selected = true;
+				}
+				character.target = target;
+				
+				var overlay = document.getElementById("characterReady" + (pos ? 1 : 2));
+				overlay.classList.toggle("inactive");
+				overlay.style.backgroundImage = "url('characters/" + character.image + "')";
+
+				overlay.querySelector(".characterAction").innerHTML = (target != -1 ? character.skills[index].name.toUpperCase() + "<br /><span>against</span><br />ENEMY " + target : "RETREAT");
+
+				var complete = document.querySelectorAll(".characterReady.inactive");
+				document.querySelector("#btnCommit").disabled = (complete.length != 0);
+				
+				overlay.querySelector("button").onclick = function()
+				{
+					if(target != -1)
+					{
+						character.skills[index].selected = false;
+						character.target = null;
+					}
+					overlay.classList.toggle("inactive");
+					
+					document.querySelector("#btnCommit").disabled = true;
+				};
+			}
+
+			function commit()
+			{
+				document.querySelector("#dialog1").style.visibility = "hidden";
+			}
+		</script>
 	</head>
 	<body>
 		<div id="gamePlay">
 			<canvas id="gameCanvas"></canvas>
-            
-            <div id="dialog1" class="dialog">
-                <div id="topPanel">
-                    <div id="timerLock">Time/Lock-unlock Button</div>
-                    <div id="commit">Commit</div>
-                </div>
-                <div id="battleMenu">
-                    <div id="character1" class="characterMenu active1">
-                        <div class="abilities">
-                            <button type="button">Ability 1</button>
-                            <button type="button">Ability 2</button>
-                            <button type="button">Ability 3</button>
-                            <button type="button">Ability 4</button>
-                            <button type="button">Retreat</button>
-                        </div>
-                    </div>
-                    <div id="character2" class="characterMenu active2">
-                        <div class="abilities">
-                            <button type="button">Ability 1</button>
-                            <button type="button">Ability 2</button>
-                            <button type="button">Ability 3</button>
-                            <button type="button">Ability 4</button>
-                            <button type="button">Retreat</button>
-                        </div>
-                    </div>
-                    <div id="character3" class="characterMenu inactive">
-                        <div class="abilities">
-                            <button type="button">Ability 1</button>
-                            <button type="button">Ability 2</button>
-                            <button type="button">Ability 3</button>
-                            <button type="button">Ability 4</button>
-                            <button type="button">Retreat</button>
-                        </div>
-                    </div>
-                    
-                    <div id="skillOverlay1" class="skillOverlay inactive">
-                        <p class="skillDesc"></p>
-                        <div class="buttons">
-                            <button type="button">Enemy 1</button>
-                            <button type="button">Enemy 2</button>
-                            <button type="button">Back</button>
-                        </div>
-                    </div>
-                    <div id="skillOverlay2" class="skillOverlay inactive">
-                        <p class="skillDesc"></p>
-                        <div class="buttons">
-                            <button type="button">Enemy 1</button>
-                            <button type="button">Enemy 2</button>
-                            <button type="button">Back</button>
-                        </div>
-                    </div>
-                    
-                    <div id="characterReady1" class="characterReady inactive">
-                        <div class="characterPortrait"><img /></div>
-                        <div class="buttons">
-                            <button type="button">Back</button>
-                        </div>
-                    </div>
-                    <div id="characterReady2" class="characterReady inactive">
-                        <div class="characterPortrait"><img /></div>
-                        <div class="buttons">
-                            <button type="button">Back</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="dialog2" class="dialog">
-                <div id="tabMenu">
-                    <a href="#">Settings</a>
-                    <a href="#">Battle Log</a>
-                </div>
-                <div id="settings">
-                    <!-- set stuff here -->
-                </div>
-                <div id="battleLog">
-                    <ol reversed="reversed">
-                        <li>They fight, they bite</li>
-                        <li>They bite and fight and bite</li>
-                        <li>Fight fight fight</li>
-                        <li>bite bite bite </li>
-                        <li>They love, they share </li>
-                        <li>They share and love and share</li>
-                        <li>Love love love</li>
-                        <li>share share share, </li>
-                        <li>They fought and bit</li>
-                        <li>They fought and fought and bit</li>
-                        <li>Fought fought fought</li>
-                        <li>bit bit bit </li>
-                        <li>They fight and bite, (and bark!) </li>
-                        <li>They fight and fight and bite, (and bark!) </li>
-                        <li>Fight bite bark, (woof woof woof!) </li>
-                        <li>They fight, they fight! </li>
-                        <li>They fight and fight! </li>
-                        <li>Fight, fight! Fight!</li>
-                    </ol>
-                </div>
-            </div>
+			
+			<div id="dialog1" class="dialog">
+				<div id="topPanel">
+					<img id="active_img1" src="characters/nopic.png" border="0" alt="" />
+					<div><span id="timeout">00:30</span></div>
+					<div><button id="btnCommit" type="button" disabled="disabled" onclick="commit()">Commit</button></div>
+					<img id="active_img2" src="characters/nopic.png" border="0" alt="" />
+				</div>
+				<div id="battleMenu">
+					<div id="character1" class="characterMenu active1">
+						<div class="abilities">
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+						</div>
+					</div>
+					<div id="character2" class="characterMenu active2">
+						<div class="abilities">
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+						</div>
+					</div>
+					<div id="character3" class="characterMenu inactive">
+						<div class="abilities">
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+							<button type="button"></button>
+						</div>
+					</div>
+					
+					<div id="skillOverlay1" class="skillOverlay inactive">
+						<p class="skillDesc"></p>
+						<div class="buttons">
+							<button type="button">Enemy 1</button>
+							<button type="button">Enemy 2</button>
+							<button type="button">Back</button>
+						</div>
+					</div>
+					<div id="skillOverlay2" class="skillOverlay inactive">
+						<p class="skillDesc"></p>
+						<div class="buttons">
+							<button type="button">Enemy 1</button>
+							<button type="button">Enemy 2</button>
+							<button type="button">Back</button>
+						</div>
+					</div>
+					
+					<div id="characterReady1" class="characterReady inactive">
+						<div class="characterAction"></div>
+						<div class="buttons">
+							<button type="button">Back</button>
+						</div>
+					</div>
+					<div id="characterReady2" class="characterReady inactive">
+						<div class="characterAction"></div>
+						<div class="buttons">
+							<button type="button">Back</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="dialog2" class="dialog">
+				<div id="tabMenu">
+					<a href="#">Settings</a>
+					<a href="#">Battle Log</a>
+				</div>
+				<div id="settings">
+					<!-- set stuff here -->
+				</div>
+				<div id="battleLog">
+					<ol reversed="reversed">
+						<li>They fight, they bite</li>
+						<li>They bite and fight and bite</li>
+						<li>Fight fight fight</li>
+						<li>bite bite bite </li>
+						<li>They love, they share </li>
+						<li>They share and love and share</li>
+						<li>Love love love</li>
+						<li>share share share, </li>
+						<li>They fought and bit</li>
+						<li>They fought and fought and bit</li>
+						<li>Fought fought fought</li>
+						<li>bit bit bit </li>
+						<li>They fight and bite, (and bark!) </li>
+						<li>They fight and fight and bite, (and bark!) </li>
+						<li>Fight bite bark, (woof woof woof!) </li>
+						<li>They fight, they fight! </li>
+						<li>They fight and fight! </li>
+						<li>Fight, fight! Fight!</li>
+					</ol>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
