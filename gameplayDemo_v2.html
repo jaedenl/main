@@ -10,9 +10,57 @@
 			#gamePlay { position:relative;width:100%;height:100%;background:green }
 			
 			canvas { height:100%;width:100%;background:#33CC33 }
+
+			@keyframes tostart {
+				0% { color: #FFFFFF; }
+				50% { color: #191919; }
+				0% { color: #FFFFFF; }
+			}
+
+			#titleScreen { position:absolute;top:0;left:0;height:100%;width:100%; }
+			#titleScreen span 
+			{ 
+				display:block;
+				position:absolute;bottom:10%;
+				left:0;width:100%;
+				text-align:center;
+				font-size:60pt;
+				color:#ffffff;
+				text-transform:uppercase;
+				text-decoration:blink;
+				animation-name: tostart;
+				animation-duration: 3s;
+				animation-iteration-count: infinite;
+			}
+
+			#characterSelect 
+			{ 
+				position:absolute;
+				background-color:rgba(0,0,0,0.7);
+				border-radius:50px;
+				padding:50px;
+				top:14%;left:14%;
+				height:calc(72% - 100px);width:calc(72% - 100px); 
+			}
+
+			.player { display:inline-block;width:50%;height:5%;color:#ffffff;font-size:22pt;text-transform:uppercase; }
+			.player.active { font-weight:bold }
+			.player:nth-child(1) { color:#33CCFF;text-align:left }
+			.player:nth-child(2) { color:#999966;text-align:right }
+
+			figure { height:330px;width:305px;display:inline-block;margin:5px;padding:0;border-radius:50px; }
+			figure img { height:275px;width:275px;margin:0;padding:15px 15px 0 15px;border-radius:50px; }
+			figcaption { color:#ffffff;text-align:center;font-size:large;margin:0;padding:0 15px 15px 15px;height:25px;width:275px; }
+
+			figure:hover { background-color:#66CC33 }
+			figure.selected_player1, figure.selected_player1:hover { background-color:#33CCFF }
+			figure.selected_player2, figure.selected_player2:hover { background-color:#999966 }
+			figure.selected_player1 figcaption, figure.selected_player2 figcaption { color:#ffffff }
+			figure.selected_player1 figcaption:before, figure.selected_player2 figcaption:before { content:'\2713 '; }
+
 			.dialog { position:absolute;background-color:rgba(0,0,0,0.7);border-radius:50px;padding:50px; }
 			#dialog1 { top:10%;left:10%;height:calc(80% - 100px);width:calc(80% - 100px); }
-			#dialog2 { bottom:30%;right:30%;height:calc(40% - 100px);width:calc(40% - 100px);display:none; }
+			#dialog2 { bottom:30%;right:30%;height:calc(40% - 100px);width:calc(40% - 100px); }
 
 			#topPanel { height:20%;width:100%;background:red; }
 			#topPanel img { height:100%;width:20%; }
@@ -34,11 +82,14 @@
 			.characterReady { background-size:100%;background-repeat:no-repeat; }
 			.characterAction { margin:20px;font-size:3em;font-weight:bold;text-align:center;line-height:1.6em; }
 			
-			button { display:block;height:1.8em;width:auto;font-size:2.5em;margin:0.1em;border:none;border-radius:8%;background-color:#000000;color:#ffffff;padding:5%;line-height:0.4em;margin:3% auto; }
+			button { border:none;border-radius:8%;background-color:#000000;color:#ffffff; }
+			.dialog button { display:block;height:1.8em;width:auto;font-size:2.5em;margin:0.1em;padding:5%;line-height:0.4em;margin:3% auto; }
 			button[disabled] { background-color:grey }
 			
 			button.selected { color:gold; }
 			button.selected:before { content:'\2713 ';color:gold; }
+
+			.smBtn { height:1.2em;width:auto;font-size:0.5em;font-size:0.8em;padding:3%;background-color:#0033FF;line-height:0.3em; }
 			
 			#battleLog { font-size:12pt;padding:2px;height:auto;background-color:#000000;color:yellow;font-family:monospace; }
 
@@ -48,6 +99,9 @@
 		</style>
 		<script>
 			var intv = null;
+			
+			var activePlayer = 1;
+			var selectedCount = 0;
 
 			var characters =
 			{
@@ -92,11 +146,28 @@
 					retreat : false,
 					target : null
 				}
-
 			};
 	
 			window.onload = function()
 			{
+				var f = document.querySelectorAll("figure");
+				for(var i = 0; i < f.length; i++)
+				{
+					f[i].onclick = function()
+					{
+						var c = (activePlayer == 1 ? "selected_player1" : "selected_player2");
+
+						this.classList.toggle(c);
+						selectedCount = selectedCount + (this.className.indexOf("selected") != -1 ? 1 : -1);
+
+						if(selectedCount > 3)
+						{
+							this.classList.toggle(c);
+							selectedCount--;
+						}		
+					};
+				}
+
 				var bkgrd = new Image();
 				bkgrd.onload = function()
 				{
@@ -136,8 +207,6 @@
 						};
 					}
 				}
-
-				intv = setInterval("countdown()", 1000);				
 			}
 
 			function countdown()
@@ -175,6 +244,30 @@
 					}
 					commit();
 				}		
+			}
+
+			function start()
+			{
+				document.querySelector("#titleScreen").classList.toggle("inactive");
+				document.querySelector("#characterSelect").classList.toggle("inactive");
+			}
+
+			function selectCommit(player)
+			{
+				if(player == 1)
+				{
+					activePlayer = 2;
+					selectedCount = 0;
+				}
+				else
+				{
+					activePlayer = 1;
+					
+					document.querySelector("#characterSelect").classList.toggle("inactive");
+					document.querySelector("#dialog1").classList.toggle("inactive");
+
+					intv = setInterval("countdown()", 1000);	
+				}
 			}
 		
 			function showSkill(character, index, pos)
@@ -248,8 +341,52 @@
 	<body>
 		<div id="gamePlay">
 			<canvas id="gameCanvas"></canvas>
+
+			<div id="titleScreen" onclick="start()">
+				<img src="images/Mercs_Logo_2.0.jpg" width="100%" height="100%" border="0" alt="" />
+				<span>Click screen to start</span>
+			</div>
+
+			<div id="characterSelect" class="inactive">
+				<div class="innerDiv">
+					<div class="player active">Player 1 Select <button class="smBtn" onclick="selectCommit(1)">Commit</button></div>
+					<div class="player"><button class="smBtn" onclick="selectCommit(2)">Commit</button> Player 2 Select</div>
+					<figure>
+						<img src="characters/bigsword.png" width="275" height="275" border="0" alt="" />
+						<figcaption>Big Sword Guy</figcaption>
+					</figure>
+					<figure>
+						<img src="characters/caveman.png" width="275" height="275" border="0" alt="" />
+						<figcaption>Caveman</figcaption>
+					</figure>
+					<figure>
+						<img src="characters/clown.png" width="275" height="275" border="0" alt="" />
+						<figcaption>Clown</figcaption>
+					</figure>
+					<figure>
+						<img src="characters/cyborg.png" width="275" height="275" border="0" alt="" />
+						<figcaption>Cyborg</figcaption>
+					</figure>
+					<figure>
+						<img src="characters/spacegirl.png" width="275" height="275" border="0" alt="" />
+						<figcaption>Space Girl</figcaption>
+					</figure>
+					<figure>
+						<img src="characters/witch.png" width="275" height="275" border="0" alt="" />
+						<figcaption>Witch</figcaption>
+					</figure>
+					<figure>
+						<img src="characters/nopic.png" width="275" height="275" border="0" alt="" />
+						<figcaption>??</figcaption>
+					</figure>
+					<figure>
+						<img src="characters/nopic.png" width="275" height="275" border="0" alt="" />
+						<figcaption>??</figcaption>
+					</figure>
+				</div>
+			</div>
 			
-			<div id="dialog1" class="dialog">
+			<div id="dialog1" class="dialog inactive">
 				<div id="topPanel">
 					<img id="active_img1" src="characters/nopic.png" border="0" alt="" />
 					<div><span id="timeout">00:30</span></div>
@@ -317,7 +454,7 @@
 				</div>
 			</div>
 			
-			<div id="dialog2" class="dialog">
+			<div id="dialog2" class="dialog inactive">
 				<div id="tabMenu">
 					<a href="#">Settings</a>
 					<a href="#">Battle Log</a>
