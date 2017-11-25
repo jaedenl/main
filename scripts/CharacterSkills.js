@@ -165,7 +165,7 @@ function IntegratedBattleSystem()
     this.name = "Integrated Battle System";
     this.type = SkillType.Offensive;
     this.attackValue = 50;
-    this.this.randomRebuffProb = -0.25;
+    this.randomRebuffProb = -0.25;
     this.description = "Deals medium damage and has a chance to apply a random debuff (-25%) to the target.";
 }
 IntegratedBattleSystem.prototype = new Skill();
@@ -205,7 +205,3 @@ function PassiveEffect()
     };
 }
 PassiveEffect.prototype = new Skill();
-
-
-
-

@@ -1,6 +1,6 @@
 var CharacterType = { NotSet : -1, Physical : 1, Finesse : 2, Magic : 3 };
 
-function Character(n, i, t)
+function Character()
 {
     var dazed = false;
     var poisoned = false;
@@ -21,7 +21,8 @@ function Character(n, i, t)
     
     this.attackHistory = [];
     
-    this.retreat = false;
+    this.retreat = false;	
+	this.position = -1;
     this.target = -1;
     
     this.isDazed = function() { return dazed; };
