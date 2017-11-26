@@ -16,7 +16,7 @@ function Character()
     this.image = "";
     this.type = CharacterType.NotSet;
     
-    this.skills = [];
+    this.skills = [ new Skill(), new Skill(), new Skill(), new Skill() ];
     this.backstory = "";
     
     this.attackHistory = [];
