@@ -5,8 +5,8 @@ function Skill()
     var selected = false;
     var active = true;
     
-    this.name = "";
-    this.description = "";
+    this.name = "Skill Name";
+    this.description = "Description of Skill.";
     this.type = SkillType.NotSet;
     
     this.multiTarget = false;
