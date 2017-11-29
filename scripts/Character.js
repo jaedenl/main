@@ -79,7 +79,7 @@ function Character()
 		skill = this.getSelectedSkill();
 		str += "uses " + skill.name.toUpperCase() 
 		    + (skill.type == SkillType.Offensive ? " against ENEMY MERC " + this.target 
-		    : " on " + (this.target == this.position ? "SELF" : "ALLY " + this.target) + ".";
+		    : " on " + (this.target == this.position ? "SELF" : "ALLY " + this.target)) + ".";
 	    }
 	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
     };
