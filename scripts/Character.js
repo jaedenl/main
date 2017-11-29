@@ -22,7 +22,7 @@ function Character()
     this.attackHistory = [];
     
     this.retreat = false;	
-	this.position = -1;
+    this.position = -1;
     this.target = -1;
     
     this.isDazed = function() { return dazed; };
@@ -48,6 +48,39 @@ function Character()
     
     this.getSpeed = function() { return speed; };
     this.setSpeed = function(value) { attack = speed; };
+	
+    this.setSelectedSkill = function(value) 
+    { 
+	for(var k = 0; k < this.skills.length; k++)
+	{
+		this.skills[k].selected = (k == value);
+	}
+    };
+	
+    this.getSelectedSkill = function()
+    {
+	for(var k = 0; k < this.skills.length; k++)
+	{
+		if(this.skills[k].selected) return this.skills[k];
+	}
+	return null;
+    };
     
     this.getLastAttack = function() { return this.attackHistory[this.attackHistory.length - 1]; };
+    this.setLastAttack = function()
+    {
+	    var str = "";
+	    if(this.retreat)
+	    {
+		str = "RETREATS.";
+	    }
+	    else
+	    {
+		skill = this.getSelectedSkill();
+		str += "uses " + skill.name.toUpperCase() 
+		    + (skill.type == SkillType.Offensive ? " against ENEMY MERC " + this.target 
+		    : " on " + (this.target == this.position ? "SELF" : "ALLY " + this.target) + ".";
+	    }
+	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
+    };
 }
