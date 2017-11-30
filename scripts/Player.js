@@ -1,32 +1,24 @@
 function Player(a)
 {
-	var score = 0;
-	var winner = false;
-	var active = a;
-	//var temp = [];
+	this.score = 0;
+	this.winner = false;
+	this.active = a;
 
 	this.selectedCount = 0;
-	//this.characters = {};
-	this.characters = [];
+	this.characters = null;
 
-	this.getScore = function() { return score; };
-	this.setScore = function(value) { score = value; };
-
-	this.isWinner = function() { return winner; };
-	this.setWinner = function(value) { winner = value; };
-
-	this.isActive = function() { return active; };
-	this.setActive = function(value) { active = value; };
+	this.isWinner = function() { return this.winner; };
+	this.isActive = function() { return this.active; };
 
 	this.addCharacter = function(c)
 	{
-		//temp.push(c);
+		if(!this.characters) this.characters = [];
+
 		this.characters.push(new c());
 	};
 
 	this.removeCharacter = function(c)
 	{
-		//temp.slice(temp.indexOf(c), 0);
 		for(var i = 0; i < this.characters.length; i++)
 		{
 			if(this.characters[i] instanceof c) 
@@ -39,9 +31,6 @@ function Player(a)
 
 	this.commit = function()
 	{		
-		/*this.characters.character1 = new temp[0]();
-		this.characters.character2 = new temp[1]();
-		this.characters.character3 = new temp[2]();*/
 		for(var i = 0; i < this.characters.length; i++) this.characters[i].position = i + 1;
 	};
 
@@ -55,12 +44,10 @@ function Player(a)
 
 	this.reset = function()
 	{
-		winner = false;
-		active = false;
-		selectedCount = 0;
-
-		//temp = [];
-		//this.characters = {};		
-		this.characters = [];
+		this.winner = false;
+		this.active = false;
+		this.selectedCount = 0;
+	
+		this.characters = null;
 	};
 }

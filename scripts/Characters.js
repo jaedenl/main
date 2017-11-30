@@ -4,12 +4,10 @@ function BigSwordGuy()
 {
     this.name = "Artur Hobbe";
 	this.image = "bigsword.png";
-    this.type = CharacterType.Physical;
+    this.colour = 0x934095;
+	this.type = CharacterType.Physical;
 
-    this.skills[0] = new SwordChop();
-    this.skills[1] = new SweepingStrike();
-    this.skills[2] = new DefensiveStance();
-    this.skills[3] = new Focus();
+    this.skills = [ new SwordChop(), new SweepingStrike(), new DefensiveStance(), new Focus(), new Retreat() ];
 
 	this.backstory = "Once a peaceful farmer, forced to take up the sword to defend his family and livelihood.  Hobbe quickly found out he was a better bladesman than farmer, and found work in the village as a sellsword."
 }
@@ -19,12 +17,10 @@ function SniperGirl()
 {
     this.name = "Artemis";
 	this.image = "snipergirl.png";
-    this.type = CharacterType.Finesse;
+    this.colour = 0x9CFE9A;
+	this.type = CharacterType.Finesse;
 
-    this.skills[0] = new Headshot();
-    this.skills[1] = new RicochetShot();
-    this.skills[2] = new TakeAim();
-    this.skills[3] = new Camouflage();
+    this.skills = [ new Headshot(), new RicochetShot(), new TakeAim(), new Camouflage(), new Retreat() ];
 
     this.backstory = "A crack-shot special forces veteran, this career soldier grew disinterested in civilian life after the war and turned to mercenary work. If you can afford her rate, and you can find her, maybe you can hire Artemis.";
 }
@@ -34,12 +30,10 @@ function Mage()
 {
     this.name = "Zocoma";
 	this.image = "nopic.png";
-    this.type = CharacterType.Magic;
+    this.colour = 0x64CA99;
+	this.type = CharacterType.Magic;
 
-    this.skills[0] = new Fireball();
-    this.skills[1] = new LightningStorm();
-    this.skills[2] = new DivineShield();
-    this.skills[3] = new PoolMana();
+    this.skills = [ new Fireball(), new LightningStorm(), new DivineShield(), new PoolMana(), new Retreat() ];
 
     this.backstory = "This reclusive wizard had her first taste of fame and wealth after a quest to slay a dragon. Now Zocoma has a taste for the spotlight and uses her powers for profiteering.";
 }
@@ -49,12 +43,10 @@ function Djinn()
 {
     this.name = "Odesai the Ancient";
 	this.image = "nopic.png";
-    this.type = CharacterType.Magic;
+    this.colour = 0x16C05D;
+	this.type = CharacterType.Magic;
 
-    this.skills[0] = new LightningStrike();
-    this.skills[1] = new CloudBarrier();
-    this.skills[2] = new HighWinds();
-    this.skills[3] = new Wish();
+    this.skills = [ new LightningStrike(), new CloudBarrier(), new HighWinds(), new Wish(), new Retreat() ];
 
     this.backstory = "He lifts.";
 }
@@ -64,12 +56,10 @@ function Cyborg()
 {
     this.name = "Proto";
 	this.image = "cyborg.png";
-    this.type = CharacterType.Finesse;
+    this.colour = 0x8049D2;
+	this.type = CharacterType.Finesse;
 
-    this.skills[0] = new IntegratedBattleSystem();
-    this.skills[1] = new ElectronicBarrier();
-    this.skills[2] = new NanobotRepairs();
-    this.skills[3] = new PassiveEffect();
+    this.skills = [ new IntegratedBattleSystem(), new ElectronicBarrier(), new NanobotRepairs(), new PassiveEffect(), new Retreat() ];
 
     this.backstory = "After the hovertrain accident that killed his tycoon parents and left his body broken, He spent months in intensive care, clawing at the last shreds of his life. "
 		+ "With the help of an experimental transhumanist program, Proto was offered a second chance. Now almost eighty percent cybernetic, Proto uses his lightning fast synapses "
@@ -81,6 +71,10 @@ function Alien()
 {
 	this.name = "ALIEN";
 	this.image = "nopic.png";
+	this.colour = 0xCF744D;
+
+	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
+
     this.backstory = "Emotionless as he completes his task. From planet Neptune.";
 }
 Alien.prototype = new Character();
@@ -89,7 +83,11 @@ function Caveman()
 {
 	this.name = "CAVEMAN";
 	this.image = "caveman.png";
-	this.backstory = "Always looking for a bigger challenge";
+	this.colour = 0x59D8EF;
+
+	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
+
+    this.backstory = "Always looking for a bigger challenge";
 }
 Caveman.prototype = new Character();
 
@@ -97,7 +95,11 @@ function CowboyGuy()
 {
 	this.name = "COWBOY GUY";
 	this.image = "nopic.png";
-	this.backstory = "Quick-witted gunslinger with unusually good luck";
+	this.colour = 0x800DBC;
+
+	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
+
+    this.backstory = "Quick-witted gunslinger with unusually good luck";
 }
 CowboyGuy.prototype = new Character();
 
@@ -105,7 +107,11 @@ function HiveDrone()
 {
 	this.name = "HIVE DRONE";
 	this.image = "nopic.png";
-	this.backstory = "Mindless worker";
+	this.colour = 0xBD4038;
+
+	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
+
+    this.backstory = "Mindless worker";
 }
 HiveDrone.prototype = new Character();
 
@@ -113,7 +119,11 @@ function SpaceGirl()
 {
 	this.name = "SPACE GIRL";
 	this.image = "spacegirl.png";
-	this.backstory = "An astronaut from the Canadian Space Program, very smart, space-age technology";
+	this.colour = 0x440383;
+
+	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
+
+    this.backstory = "An astronaut from the Canadian Space Program, very smart, space-age technology";
 }
 SpaceGirl.prototype = new Character();
 
@@ -121,7 +131,11 @@ function Pirate()
 {
 	this.name = "PIRATE";
 	this.image = "nopic.png";
-	this.backstory = "Captain of the Rusty Bucket Corsairs";
+	this.colour = 0x75F927;
+
+	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
+
+    this.backstory = "Captain of the Rusty Bucket Corsairs";
 }
 Pirate.prototype = new Character();
 
@@ -129,6 +143,10 @@ function Witch()
 {
 	this.name = "WITCH";
 	this.image = "witch.png";
-	this.backstory = "Purple and gold robed, wise, old";
+	this.colour = 0xE7CBBA;
+
+	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
+
+    this.backstory = "Purple and gold robed, wise, old";
 }
 Witch.prototype = new Character();

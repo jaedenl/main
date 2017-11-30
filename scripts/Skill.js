@@ -1,11 +1,11 @@
 var SkillType = { NotSet : -1, Reusable : 1, Defensive : 2, Offensive : 3 };
 
-function Skill()
+function Skill(n)
 {
-    var selected = false;
-    var active = true;
+	this.selected = false;
+	this.active = true;
     
-    this.name = "Skill Name";
+    this.name = n;
     this.description = "Description of Skill.";
     this.type = SkillType.NotSet;
     
@@ -46,10 +46,9 @@ function Skill()
     
     //effective number of rounds
     this.duration = 0;
-    
-    this.isSelected = function() { return selected; };
-    this.setSelected = function(value) { selected = value; };
-    
-    this.isActive = function() { return active };
-    this.setActive = function(value) { active = value; };
+
+	this.isSelected = function() { return this.selected; };    
+    this.isActive = function() { return this.active; };
+
+	this.toLog = function() { return "<strong>" + this.name + "</strong><br />" + this.description; };
 }

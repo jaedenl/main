@@ -2,10 +2,10 @@ var CharacterType = { NotSet : -1, Physical : 1, Finesse : 2, Magic : 3 };
 
 function Character()
 {
-    var dazed = false;
-    var poisoned = false;
-    var bleeding = false;
-    var immune = false;
+    this.dazed = false;
+    this.poisoned = false;
+    this.bleeding = false;
+    this.immune = false;
     
     var health = 0;
     var defense = 0;
@@ -15,27 +15,23 @@ function Character()
     this.name = "";
     this.image = "";
     this.type = CharacterType.NotSet;
+
+	this.colour = 0x000000;
+	this.obj = null;
     
-    this.skills = [ new Skill(), new Skill(), new Skill(), new Skill() ];
+    this.skills = null;
     this.backstory = "";
     
-    this.attackHistory = [];
+    this.attackHistory = null;
     
     this.retreat = false;	
     this.position = -1;
     this.target = -1;
     
-    this.isDazed = function() { return dazed; };
-    this.setDazed = function(value) { dazed = value; };
-    
-    this.isPoisoned = function() { return poisoned; };
-    this.setPosioned = function(value) { poisoned = value; };
-    
-    this.isBleeding = function() { return bleeding; };
-    this.setBleeding = function(value) { bleeding = value; };
-    
-    this.isImmune = function() { return immune; };
-    this.setImmune = function(value) { immune = value; };
+    this.isDazed = function() { return this.dazed; };    
+    this.isPoisoned = function() { return this.poisoned; };    
+    this.isBleeding = function() { return this.bleeding; };    
+    this.isImmune = function() { return this.immune; };
     
     this.getHealth = function() { return health; };
     this.setHealth = function(value) { health = value; };
@@ -49,38 +45,53 @@ function Character()
     this.getSpeed = function() { return speed; };
     this.setSpeed = function(value) { attack = speed; };
 	
-    this.setSelectedSkill = function(value) 
-    { 
-	for(var k = 0; k < this.skills.length; k++)
-	{
-		this.skills[k].selected = (k == value);
-	}
-    };
-	
     this.getSelectedSkill = function()
     {
-	for(var k = 0; k < this.skills.length; k++)
-	{
-		if(this.skills[k].selected) return this.skills[k];
-	}
-	return null;
+		for(var k = 0; k < this.skills.length; k++)
+		{
+			if(this.skills[k].isSelected()) return this.skills[k];
+		}
+		return null;
     };
     
-    this.getLastAttack = function() { return this.attackHistory[this.attackHistory.length - 1]; };
+    this.getLastAttack = function() 
+	{ 
+		if(!this.attackHistory) return null;
+		return this.attackHistory[this.attackHistory.length - 1]; 
+	};
+
     this.setLastAttack = function()
     {
 	    var str = "";
-	    if(this.retreat)
-	    {
-		str = "RETREATS.";
-	    }
-	    else
-	    {
-		skill = this.getSelectedSkill();
-		str += "uses " + skill.name.toUpperCase() 
-		    + (skill.type == SkillType.Offensive ? " against ENEMY MERC " + this.target 
-		    : " on " + (this.target == this.position ? "SELF" : "ALLY " + this.target)) + ".";
-	    }
+		var skill = this.getSelectedSkill();
+
+		if(skill)
+		{
+			if(skill.name == "Retreat")
+			{
+				str = "RETREATS.";
+			}
+			else
+			{
+				str += "uses " + skill.name.toUpperCase() 
+					+ (skill.type == SkillType.Offensive ? " against ENEMY MERC " + this.target 
+					: " on " + (this.target == this.position ? "SELF" : "ALLY " + this.target)) + ".";
+			}
+		}
+
+		if(!this.attackHistory) this.attackHistory = [];
 	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
     };
+
+	this.createGameObject = function(shape, x, y, z)
+	{
+		var material = new THREE.MeshLambertMaterial( { color: this.colour } );
+
+		this.obj = new THREE.Mesh(shape, material);
+		this.obj.translateX(x);   
+		this.obj.translateY(y);   
+		this.obj.translateZ(z);
+		
+		return this.obj;
+	};
 }
