@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-CA">
     <head>
-        <base href="https://mercsteam.github.io/main/" />
+        <!--base href="https://mercsteam.github.io/main/" /-->
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <title>Merc TT Demo</title>
         <link rel="stylesheet" href="style/style.css" />
@@ -13,13 +13,21 @@
         <script src="scripts/Characters.js"></script>
         
         <script>
-            var intv, tmrIntro;
+            var intv, tmrIntro, gameLog;
             var player1, player2;
             
             window.onload = function()
             {
                 player1 = new Player(true);
                 player2 = new Player(false);
+				
+				gameLog = 
+				{
+					console : document.querySelector("textarea"),
+					write : function(text) { this.console.value = text + "\n" + this.console.value; },
+					flush : function() { this.console.value = ""; }
+				};
+				gameLog.flush();
                 
                 tmrIntro = setTimeout("skipIntro()", 25000);
                 
@@ -116,18 +124,20 @@
                 if(player1.isActive())
                 {
                     player1.commit();
-                    player1.setActive(false);
-                    
-                    player2.setActive(true);
+                 
+					player1.active = false;                    
+                    player2.active = true;
                 }
                 else
                 {
                     player2.commit();
-                    player2.setActive(false);
+                    
+					player2.active = false;
+					player1.active = true;
                     
                     document.querySelector("#characterSelect").classList.toggle("inactive");
-                    
-                    player1.setActive(true);
+
+					loadArena();
                     
                     toggleDialog1();
                     populateDialog1();
@@ -151,6 +161,8 @@
                 
                 for(var i = 0; i < p.characters.length; i++)
                 {
+					p.characters[i].retreat = false;
+
                     if(p.characters[i].position == 1 || p.characters[i].position == 2)
                     {
                         if(p.characters[i].position == 1)
@@ -165,17 +177,10 @@
                         }
                         
                         for(var j = 0; j < btns.length; j++)
-                        {
-                            if(j == p.characters[i].skills.length)
-                            {
-                                p.characters[i].retreat = false;
-                                btns[j].innerHTML = "Retreat";
-                            }
-                            else
-                            {
-                                p.characters[i].skills[j].setSelected(false);
-                                btns[j].innerHTML = p.characters[i].skills[j].name;
-                            }
+                        {							
+							p.characters[i].skills[j].selected = false;
+							
+							btns[j].innerHTML = p.characters[i].skills[j].name;
                             
                             btns[j].onclick = function()
                             {
@@ -198,9 +203,22 @@
                                 var pos = (this.parentElement.parentElement.classList.contains("active1") ? 1 : 2);
                                 var character = p.getCharacterByPosition(pos);
                                 
-                                if(index == btns.length - 1)
+								if(this.innerHTML == "Retreat")
                                 {
-                                    retreat(character, index, pos);
+									var s = (pos == 1 ? ".active2" : ".active1") + " button:last-child";
+									
+									var btn = document.querySelector(s);
+									btn.disabled = !character.retreat;
+									
+									character.retreat = !character.retreat;
+									if(!character.retreat)
+									{
+										this.classList.remove("selected");
+									}
+									else
+									{
+										showReady(character, index, pos, -1);
+									}
                                 }
                                 else
                                 {
@@ -217,13 +235,14 @@
                 var b = document.querySelectorAll(".abilities button");
                 for(var i = 0; i < b.length; i++)
                 {
+					b[i].disabled = false;
                     b[i].classList.remove("selected");
                 }
                 
                 var f = document.querySelectorAll(".skillOverlay, .characterReady");
                 for(var i = 0; i < f.length; i++)
                 {
-                    f[i].classList.toggle("inactive");
+                    f[i].classList.add("inactive");
                 }
                 
                 clearInterval(intv);
@@ -233,46 +252,24 @@
         
             function showSkill(character, index, pos)
             {
-                var overlay = document.getElementById("skillOverlay" + pos);
-                overlay.classList.toggle("inactive");
-                
-                overlay.querySelector(".skillDesc").innerHTML = "<strong>" + character.skills[index].name + "</strong><br />" + character.skills[index].description;
-                
-                var btns = overlay.querySelectorAll("button");
-                btns[0].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 1" : (pos == 1 ? "Self" : "Ally 1"));
-                btns[0].onclick = function() { showReady(character, index, pos, 1); };
-                
-                btns[1].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 2" : (pos == 2 ? "Self" : "Ally 2"));
-                btns[1].onclick = function() { showReady(character, index, pos, 2); };
-                
-                btns[2].onclick = function() { overlay.classList.toggle("inactive"); };
-            }
-        
-            function retreat(character, index, pos)
-            {
-                var b = (pos ? ".active1" : ".active2") + " button:last-child";
-                var s = (pos ? ".active2" : ".active1") + " button:last-child";
-                
-                var btn = document.querySelector(s);
-                btn.disabled = !character.retreat;
-                
-                character.retreat = !character.retreat;
-                if(!character.retreat)
-                {
-                    document.querySelector(b).classList.remove("selected");
-                }
-                else
-                {
-                    showReady(character, index, pos, -1);
-                }
+				var overlay = document.getElementById("skillOverlay" + pos);
+				overlay.classList.toggle("inactive");
+					
+				overlay.querySelector(".skillDesc").innerHTML = character.skills[index].toLog();
+				
+				var btns = overlay.querySelectorAll("button");
+				btns[0].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 1" : (pos == 1 ? "Self" : "Ally 1"));
+				btns[0].onclick = function() { showReady(character, index, pos, 1); };
+				
+				btns[1].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 2" : (pos == 2 ? "Self" : "Ally 2"));
+				btns[1].onclick = function() { showReady(character, index, pos, 2); };
+				
+				btns[2].onclick = function() { overlay.classList.toggle("inactive"); };
             }
         
             function showReady(character, index, pos, target)
             {
-                if(target != -1)
-                {
-                    character.skills[index].selected = true;
-                }
+				character.skills[index].selected = true;
                 character.target = target;
                 
                 var overlay = document.getElementById("characterReady" + pos);
@@ -280,20 +277,18 @@
                 overlay.style.backgroundImage = "url('characters/" + character.image + "')";
                 
                 overlay.querySelector(".characterAction").innerHTML = (target != -1
-                      ? character.skills[index].name.toUpperCase() + "<br />"
-                      + (character.skills[index].type == SkillType.Offensive ? "<span>against</span><br />ENEMY " + target : "<span>on</span><br />" + (pos == target  ? "SELF" : "ALLY " + target))
-                      : "RETREAT");
+					? character.skills[index].name.toUpperCase() + "<br />"
+					+ (character.skills[index].type == SkillType.Offensive ? "<span>against</span><br />ENEMY " + target : "<span>on</span><br />" + (pos == target  ? "SELF" : "ALLY " + target))
+					: "RETREAT");
                 
                 var complete = document.querySelectorAll(".characterReady.inactive");
-                document.querySelector("#btnCommit").disabled = (complete.length != 0);
-                
+                document.querySelector("#btnCommit").disabled = (complete.length != 0);				
+            
                 overlay.querySelector("button").onclick = function()
                 {
-                    if(target != -1)
-                    {
-                        character.skills[index].selected = false;
-                        character.target = null;
-                    }
+					character.skills[index].selected = false;
+                    character.target = null;
+
                     overlay.classList.toggle("inactive");
                     
                     document.querySelector("#btnCommit").disabled = true;
@@ -303,12 +298,12 @@
             function commit()
             {
                 if(player1.isActive())
-                {
+                {	
                     player1.getCharacterByPosition(1).setLastAttack();
                     player1.getCharacterByPosition(2).setLastAttack();
-                    player1.setActive(false);
                     
-                    player2.setActive(true);
+					player1.active = false;                    
+                    player2.active = true;
                     
                     resetDialog1();
                     populateDialog1();
@@ -320,15 +315,14 @@
                     
                     resetDialog1();
                     toggleDialog1();
-                    startRound();
+                    
+					startRound();
                 }
             }
         
             function startRound()
             {
-                var txt = document.querySelector("textarea");
-                var str = "";
-                var skill = null;
+				gameLog.flush();
                 
                 for(var i = 0; i < player1.characters.length; i++)
                 {
@@ -336,117 +330,114 @@
                     {
                         if(player1.characters[i].position == j)
                         {
-                            txt.value = "PLAYER1: " + player1.characters[i].name + " " + player1.characters[i].getLastAttack().text + "\n" + txt.value;
+							gameLog.write("PLAYER1: " + player1.characters[i].name + " " + player1.characters[i].getLastAttack().text);
                         }
                         if(player2.characters[i].position == j)
                         {
-                            txt.value = "PLAYER2: " + player2.characters[i].name + " " + player2.characters[i].getLastAttack().text + "\n" + txt.value;
+							gameLog.write("PLAYER2: " + player2.characters[i].name + " " + player2.characters[i].getLastAttack().text);
                         }
                     }
                 }
             }
+
+			function surrender()
+			{
+				// do something
+			}
         
             function expand(lnk)
             {
                 lnk.parentElement.classList.toggle("minimize");
             }
+
+			function debugWrite(text, append)
+			{
+				var t =	document.querySelector("textarea");
+				t.value = (append ? t.value + "\n" : "") + text;
+			}
         </script>
-        </head>
+    </head>
     <body>
         <div id="gamePlay">
-            <!--canvas id="gameCanvas"></canvas-->
             <script src="https://mercsteam.github.io/threejs-testing/threejs/build/three.min.js"></script>
             <script src="https://mercsteam.github.io/threejs-testing/threejs/examples/js/controls/OrbitControls.js"></script>
             <script src="https://mercsteam.github.io/threejs-testing/Detector.js"></script>
             
             <script>
-                if (Detector.webgl)
-                {
-                    // Initiate function or other initializations here
-                    // Create a scene and perspective camera
-                    var scene = new THREE.Scene();
-                    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                    camera.position.set(0,10,20);
-                    camera.lookAt(new THREE.Vector3(0,0,0));
-                    
-                    controls = new THREE.OrbitControls( camera );
-                    controls.target.set(0,0,0);
-                    controls.update();
-                    
-                    // Create the renderer, set it to fill the browser window, and add the canvas
-                    var renderer = new THREE.WebGLRenderer();
-                    //renderer.setSize(window.innerWidth, window.innerHeight);
-                    renderer.setSize(1920, 1080);
-                    
-                    //document.body.appendChild(renderer.domElement);
-                    var gp = document.getElementById('gamePlay');
-                    gp.insertBefore(renderer.domElement, gp.childNodes[0]);
-                    
-                    // Create the floor.
-                    var geometryFloor = new THREE.BoxGeometry(50, 1, 20);
-                    var textureFloor = new THREE.TextureLoader().load('https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/steelfloor.jpg');
-                    var materialFloor = new THREE.MeshLambertMaterial( { map:textureFloor } );
-                    var floor = new THREE.Mesh(geometryFloor, materialFloor);
-                    floor.translateX(0);   floor.translateY(-3);  floor.translateZ(0);
-                    scene.add(floor);
-                    
-                    // Create a flat plane as the char base. Set team 1 colours.
-                    var geometry = new THREE.CylinderGeometry(2,2,6,12);
-                    var material1 = new THREE.MeshLambertMaterial( { color: 0x990000 } );
-                    
-                    var char1 = new THREE.Mesh(geometry, material1);
-                    char1.translateX(-10); char1.translateY(0);   char1.translateZ(5);
-                    scene.add(char1);
-                    
-                    var char2 = new THREE.Mesh(geometry, material1);
-                    char2.translateX(-10); char2.translateY(0);   char2.translateZ(-5);
-                    scene.add(char2);
-                    
-                    var char3 = new THREE.Mesh(geometry, material1);
-                    char3.translateX(-17); char3.translateY(0);   char3.translateZ(0);
-                    scene.add(char3);
-                    
-                    var material2 = new THREE.MeshLambertMaterial( { color: 0x000099 } );
-                    
-                    var char4 = new THREE.Mesh(geometry, material2);
-                    char4.translateX(10);   char4.translateY(0);   char4.translateZ(5);
-                    scene.add(char4);
-                    
-                    var char5 = new THREE.Mesh(geometry, material2);
-                    char5.translateX(10);  char5.translateY(0);   char5.translateZ(-5);
-                    scene.add(char5);
-                    
-                    var char6 = new THREE.Mesh(geometry, material2);
-                    char6.translateX(17); char6.translateY(0);   char6.translateZ(0);
-                    scene.add(char6);
-                    
-                    // Create lighting.
-                    var lightAmbient = new THREE.AmbientLight(0xffffff);
-                    scene.add(lightAmbient);
-                    
-                    var lightMain = new THREE.PointLight(0xffffff, 1.5, 200);
-                    var sphere = new THREE.SphereGeometry(0.5,16,8);
-                    lightMain.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xffffff } ) ) );
-                    lightMain.translateX(0);   lightMain.translateY(10);  lightMain.translateZ(0);
-                    scene.add(lightMain);
-                    
-                    // Animate/rendering loop
-                    function animate()
-                    {
-                        requestAnimationFrame( animate );
-                        
-                        controls.update();
-                        
-                        renderer.render( scene, camera );
-                    }
-                    animate();
-                }
-                else
-                {
-                    var warning = Detector.getWebGLErrorMessage();
-                    //document.getElementById('container').appendChild(warning);
-                    alert(warning);
-                }
+				function loadArena()
+				{
+					if (Detector.webgl)
+					{
+						// Initiate function or other initializations here
+						// Create a scene and perspective camera
+						var scene = new THREE.Scene();
+						
+						var camera = new THREE.PerspectiveCamera(75, 1920 / 1080, 0.1, 1000);
+						camera.position.set(0,10,20);
+						camera.lookAt(new THREE.Vector3(0,0,0));
+						
+						controls = new THREE.OrbitControls( camera );
+						controls.target.set(0,0,0);
+						controls.update();
+						
+						// Create the renderer, set it to fill the browser window, and add the canvas
+						var renderer = new THREE.WebGLRenderer();
+						renderer.setSize(1920, 1080);
+						
+						var gp = document.getElementById('gamePlay');
+						gp.insertBefore(renderer.domElement, gp.childNodes[0]);
+						
+						// Create the floor.
+						var geometryFloor = new THREE.BoxGeometry(50, 1, 20);
+						var textureFloor = new THREE.TextureLoader().load('https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/steelfloor.jpg');
+						var materialFloor = new THREE.MeshLambertMaterial( { map : textureFloor } );
+						
+						var floor = new THREE.Mesh(geometryFloor, materialFloor);
+						floor.translateX(0);   
+						floor.translateY(-3);  
+						floor.translateZ(0);
+						scene.add(floor);
+						
+						// Create a flat plane as the char base.
+						var geometry = new THREE.CylinderGeometry(2,2,6,12);
+
+						// add player 1 characters
+						scene.add(player1.characters[0].createGameObject(geometry, -10, 0, 5));
+						scene.add(player1.characters[1].createGameObject(geometry, -10, 0, -5));
+						scene.add(player1.characters[2].createGameObject(geometry, -17, 0, 0));
+						
+						//add player 2 characters
+						scene.add(player2.characters[0].createGameObject(geometry, 10, 0, 5));
+						scene.add(player2.characters[1].createGameObject(geometry, 10, 0, -5));
+						scene.add(player2.characters[2].createGameObject(geometry, 17, 0, 0));
+						
+						// Create lighting.
+						var lightAmbient = new THREE.AmbientLight(0xffffff);
+						scene.add(lightAmbient);
+						
+						var lightMain = new THREE.PointLight(0xffffff, 1.5, 200);
+						
+						var sphere = new THREE.SphereGeometry(0.5,16,8);
+						lightMain.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xffffff } ) ) );
+						lightMain.translateX(0);   
+						lightMain.translateY(10);  
+						lightMain.translateZ(0);
+						scene.add(lightMain);
+						
+						// Animate/rendering loop
+						function animate()
+						{
+							requestAnimationFrame( animate );							
+							controls.update();							
+							renderer.render( scene, camera );
+						}
+						animate();
+					}
+					else
+					{
+						gameLog.write(Detector.getWebGLErrorMessage());
+					}
+				}
             </script>
             
             <div id="titleScreen" onclick="start()">
@@ -531,20 +522,20 @@
             </div>
             
             <div id="dialog3" class="dialog minimize">
-                <a class="expandLink" href=javascript:void()" onclick="expand(this)">&lArr;</a>
+                <a class="expandLink" onclick="expand(this)">&lArr;</a>
                 <div id="options">
                     <div>
                         <nav>
-                            <a href="javascript:void()" onclick="toggleDialog1()">Toggle Interface</a>
-                            <a href="javascript:void()">Audio</a>
-                            <a href="javascript:void()" onclick="surrender()">Surrender</a>
+                            <a onclick="toggleDialog1()">Toggle Interface</a>
+                            <a>Audio</a>
+                            <a onclick="surrender()">Surrender</a>
                         </nav>
                     </div>
                 </div>
             </div>
                 
             <div id="dialog2" class="dialog minimize">
-                <a class="expandLink" href="javascript:void()" onclick="expand(this)">Battle Log</a>
+                <a class="expandLink" onclick="expand(this)">Battle Log</a>
                 <div id="battleLog">
                     <div>
                         <textarea rows="10" cols="45"></textarea>
