@@ -1,7 +1,7 @@
 body { width:1920px; height:1080px;font-size:0;font-family:Arial,Helvetica,Sans;background-color:#000000; }
 body, div, button { margin:0;padding:0; }
 
-#gamePlay { position:relative;width:100%;height:100%;background:green }
+#gamePlay { position:relative;width:100%;height:100%;background:#000000; }
 
 canvas { height:100%;width:100%;background:#33CC33 }
 
