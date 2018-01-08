@@ -29,7 +29,7 @@ SniperGirl.prototype = new Character();
 function Mage()
 {
     this.name = "Zocoma";
-	this.image = "nopic.png";
+	this.image = "mage.png";
     this.colour = 0x64CA99;
 	this.type = CharacterType.Magic;
 
@@ -42,7 +42,7 @@ Mage.prototype = new Character();
 function Djinn()
 {
     this.name = "Odesai the Ancient";
-	this.image = "nopic.png";
+	this.image = "djinn.png";
     this.colour = 0x16C05D;
 	this.type = CharacterType.Magic;
 
@@ -70,7 +70,7 @@ Cyborg.prototype = new Character();
 function Alien()
 {
 	this.name = "ALIEN";
-	this.image = "nopic.png";
+	this.image = "alien.png";
 	this.colour = 0xCF744D;
 
 	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
@@ -94,7 +94,7 @@ Caveman.prototype = new Character();
 function CowboyGuy()
 {
 	this.name = "COWBOY GUY";
-	this.image = "nopic.png";
+	this.image = "cowboy.png";
 	this.colour = 0x800DBC;
 
 	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
@@ -106,7 +106,7 @@ CowboyGuy.prototype = new Character();
 function HiveDrone()
 {
 	this.name = "HIVE DRONE";
-	this.image = "nopic.png";
+	this.image = "drone.png";
 	this.colour = 0xBD4038;
 
 	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
@@ -130,7 +130,7 @@ SpaceGirl.prototype = new Character();
 function Pirate()
 {
 	this.name = "PIRATE";
-	this.image = "nopic.png";
+	this.image = "pirate.png";
 	this.colour = 0x75F927;
 
 	this.skills = [ new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Skill("Skill"), new Retreat() ];
