@@ -65,7 +65,7 @@
                     };
                     
                     img = document.createElement("IMG");
-                    img.src = "characters/" + c.image;
+                    img.src = "characters/headshots/" + c.image;
                     img.border = 0;
                     img.alt = "";
                     
@@ -168,12 +168,12 @@
                         if(p.characters[i].position == 1)
                         {
                             btns = document.querySelectorAll(".active1 button");
-                            document.querySelector("#active_img1").src = "characters/" + p.characters[i].image;
+                            document.querySelector("#active_img1").src = "characters/headshots/" + p.characters[i].image;
                         }
                         else
                         {
                             btns = document.querySelectorAll(".active2 button");
-                            document.querySelector("#active_img2").src = "characters/" + p.characters[i].image;
+                            document.querySelector("#active_img2").src = "characters/headshots/" + p.characters[i].image;
                         }
                         
                         for(var j = 0; j < btns.length; j++)
@@ -389,7 +389,8 @@
 						
 						// Create the floor.
 						var geometryFloor = new THREE.BoxGeometry(50, 1, 20);
-						var textureFloor = new THREE.TextureLoader().load('https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/steelfloor.jpg');
+						//var textureFloor = new THREE.TextureLoader().load('https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/steelfloor.jpg');
+						var textureFloor = new THREE.TextureLoader().load('https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/textures/floor/steelfloor.jpg');
 						var materialFloor = new THREE.MeshLambertMaterial( { map : textureFloor } );
 						
 						var floor = new THREE.Mesh(geometryFloor, materialFloor);
