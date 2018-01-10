@@ -1,4 +1,5 @@
-var availableCharacters = [ BigSwordGuy, SniperGirl, Mage, Djinn, Cyborg, Alien, Caveman, CowboyGuy, HiveDrone, SpaceGirl, Pirate, Witch ];
+//var availableCharacters = [ BigSwordGuy, SniperGirl, Mage, Djinn, Cyborg, Alien, Caveman, CowboyGuy, HiveDrone, SpaceGirl, Pirate, Witch ];
+var availableCharacters = [ BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy ];
 
 function BigSwordGuy()
 {
