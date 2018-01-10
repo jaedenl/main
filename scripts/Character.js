@@ -16,8 +16,9 @@ function Character()
     this.image = "";
     this.type = CharacterType.NotSet;
 
-	this.colour = 0x000000;
-	this.obj = null;
+    this.colour = 0x000000;
+    this.obj = null;
+    this.state = null;
     
     this.skills = null;
     this.backstory = "";
