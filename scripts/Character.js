@@ -18,6 +18,7 @@ function Character()
 
     this.colour = 0x000000;
     this.obj = null;
+    this.charanim = null;
     this.state = null;
     
     this.skills = null;
@@ -86,12 +87,25 @@ function Character()
 
 	this.createGameObject = function(shape, x, y, z)
 	{
-		var material = new THREE.MeshLambertMaterial( { color: this.colour } );
+		var texture  = new THREE.TextureLoader().load(this.state.img);
+		var material = new THREE.MeshLambertMaterial( { map : texture, transparent : true } );
 
 		this.obj = new THREE.Mesh(shape, material);
 		this.obj.translateX(x);   
 		this.obj.translateY(y);   
 		this.obj.translateZ(z);
+		
+		this.charanim = null;
+		if(this.state.animate)
+		{
+			this.charanim = new TextureAnimator(
+				texture, 
+				this.state.animate.hor, 
+				this.state.animate.vert, 
+				this.state.animate.num, 
+				this.state.animate.dur
+			);
+		}
 		
 		return this.obj;
 	};
