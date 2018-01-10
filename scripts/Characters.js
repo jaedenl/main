@@ -14,7 +14,7 @@ function BigSwordGuy()
     {
 	IDLE_FRONT : { img : "bigswordguy/idle.front.png", wrap : false, animate : null },
 	IDLE_BACK  : { img : "bigswordguy/idle.back.png", wrap : true, animate : null },
-	SLASH_FRONT : { img : "slash.front.png", wrap : false, animate : { hor : 30, vert : 1, num : 30, dur : 33 } }	    
+	SLASH_FRONT : { img : "bigswordguy/slash.front.png", wrap : false, animate : { hor : 30, vert : 1, num : 30, dur : 33 } }	    
     };
 
     this.backstory = "Once a peaceful farmer, forced to take up the sword to defend his family and livelihood.  Hobbe quickly found out he was a better bladesman than farmer, and found work in the village as a sellsword."
