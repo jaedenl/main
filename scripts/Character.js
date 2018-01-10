@@ -89,7 +89,7 @@ function Character()
 	{
 		var state = this.state[s];
 		
-		var texture  = new THREE.TextureLoader().load(state.img);
+		var texture  = new THREE.TextureLoader().load(textureBaseURL + state.img);
 		if(state.wrap) texture.wrapS = THREE.RepeatWrapping;
 		
 		var material = new THREE.MeshLambertMaterial( { map : texture, transparent : true } );
