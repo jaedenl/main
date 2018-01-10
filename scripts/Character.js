@@ -85,10 +85,12 @@ function Character()
 	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
     };
 
-	this.createGameObject = function(shape, x, y, z)
+	this.createGameObject = function(s, shape, x, y, z)
 	{
-		var texture  = new THREE.TextureLoader().load(this.state.img);
-		if(this.state.wrap) texture.wrapS = THREE.RepeatWrapping;
+		var state = this.state[s];
+		
+		var texture  = new THREE.TextureLoader().load(state.img);
+		if(state.wrap) texture.wrapS = THREE.RepeatWrapping;
 		
 		var material = new THREE.MeshLambertMaterial( { map : texture, transparent : true } );
 
@@ -98,14 +100,14 @@ function Character()
 		this.obj.translateZ(z);
 		
 		this.charanim = null;
-		if(this.state.animate)
+		if(state.animate)
 		{
 			this.charanim = new TextureAnimator(
 				texture, 
-				this.state.animate.hor, 
-				this.state.animate.vert, 
-				this.state.animate.num, 
-				this.state.animate.dur
+				state.animate.hor, 
+				state.animate.vert, 
+				state.animate.num, 
+				state.animate.dur
 			);
 		}
 		
