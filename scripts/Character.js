@@ -88,6 +88,7 @@ function Character()
 	this.createGameObject = function(s, shape, x, y, z)
 	{
 		var state = this.state[s];
+		alert(state.img + ", " + state.wrap);
 		
 		var texture  = new THREE.TextureLoader().load(textureBaseURL + state.img);
 		if(state.wrap) texture.wrapS = THREE.RepeatWrapping;
