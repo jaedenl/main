@@ -98,6 +98,7 @@ function Character()
 		this.obj.translateX(x);   
 		this.obj.translateY(y);   
 		this.obj.translateZ(z);
+		this.obj.rotation.y = Math.PI * 1.6;
 		
 		this.charanim = null;
 		if(state.animate)
