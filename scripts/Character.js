@@ -88,6 +88,8 @@ function Character()
 	this.createGameObject = function(shape, x, y, z)
 	{
 		var texture  = new THREE.TextureLoader().load(this.state.img);
+		if(this.state.wrap) texture.wrapS = THREE.RepeatWrapping;
+		
 		var material = new THREE.MeshLambertMaterial( { map : texture, transparent : true } );
 
 		this.obj = new THREE.Mesh(shape, material);
