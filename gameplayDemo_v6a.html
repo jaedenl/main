@@ -387,7 +387,7 @@
                         //create background
                         var bkgrdTexture = new THREE.TextureLoader().load("images/marsBackdrop.jpg");
                         var backgroundMesh = new THREE.Mesh(
-                            new THREE.PlaneGeometry(1920, 1080, 0),
+                            new THREE.PlaneGeometry(2, 2, 0),
                             new THREE.MeshBasicMaterial({ map: bkgrdTexture })
                         );
                         backgroundMesh.material.depthTest = false;
