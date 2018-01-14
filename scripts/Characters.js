@@ -1,5 +1,6 @@
 //var availableCharacters = [ BigSwordGuy, SniperGirl, Mage, Djinn, Cyborg, Alien, Caveman, CowboyGuy, HiveDrone, SpaceGirl, Pirate, Witch ];
 var availableCharacters = [ BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy, BigSwordGuy ];
+
 var textureBaseURL = "https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/textures/";
 
 function BigSwordGuy()
@@ -12,9 +13,9 @@ function BigSwordGuy()
     this.skills = [ new SwordChop(), new SweepingStrike(), new DefensiveStance(), new Focus(), new Retreat() ];
     this.state = 
     {
-	IDLE_FRONT : { img : "bigswordguy/idle.front.png", wrap : false, animate : null },
-	IDLE_BACK  : { img : "bigswordguy/idle.back.png", wrap : true, animate : null },
-	SLASH_FRONT : { img : "bigswordguy/slash.front.png", wrap : false, animate : { hor : 30, vert : 1, num : 30, dur : 33 } }	    
+		IDLE_FRONT : { img : "bigswordguy/idle.front.png", wrap : false, animate : null },
+		IDLE_BACK  : { img : "bigswordguy/idle.back.png", wrap : true, animate : null },
+		SLASH_FRONT : { img : "bigswordguy/slash.front.png", wrap : false, animate : { hor : 30, vert : 1, num : 30, dur : 33 } }	    
     };
 
     this.backstory = "Once a peaceful farmer, forced to take up the sword to defend his family and livelihood.  Hobbe quickly found out he was a better bladesman than farmer, and found work in the village as a sellsword."
