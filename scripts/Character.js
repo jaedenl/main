@@ -20,6 +20,7 @@ function Character()
     this.obj = null;
     this.charanim = null;
     this.state = null;
+	this.healthbar = null;
     
     this.skills = null;
     this.backstory = "";
@@ -85,7 +86,7 @@ function Character()
 	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
     };
 
-	this.createGameObject = function(s, shape, x, y, z)
+	this.createGameObject = function(s, shape, x, z)
 	{
 		var state = this.state[s];
 		
@@ -96,7 +97,7 @@ function Character()
 
 		this.obj = new THREE.Mesh(shape, material);
 		this.obj.translateX(x);   
-		this.obj.translateY(y);   
+		this.obj.translateY(0);   
 		this.obj.translateZ(z);
 		this.obj.rotation.y = Math.PI * 1.6;
 		
@@ -113,5 +114,18 @@ function Character()
 		}
 		
 		return this.obj;
+	};
+
+	this.createHealthBar = function(x, z)
+	{
+		var geometry = new THREE.PlaneGeometry( 4, 0.5, 32 );
+		var material = new THREE.MeshBasicMaterial( {color: 0x00CC33, side: THREE.DoubleSide} );
+		
+		this.healthbar = new THREE.Mesh( geometry, material );
+		this.healthbar.translateX(x);
+		this.healthbar.translateY(4);
+		this.healthbar.translateZ(z);
+		this.healthbar.rotation.y = Math.PI * 1.6;
+		return this.healthbar;
 	};
 }
