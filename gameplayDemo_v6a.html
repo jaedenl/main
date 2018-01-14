@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html lang="en-CA">
     <head>
-        <base href="https://mercsteam.github.io/main/" />
+        <!--base href="https://mercsteam.github.io/main/" /-->
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
             <title>Merc TT Demo</title>
             <link rel="stylesheet" href="style/style.css" />
@@ -78,279 +77,270 @@
                         
                         charSelect.appendChild(f);
                     }
-                    
-                    /*var bkgrd = new Image();
-                     bkgrd.onload = function()
-                     {
-                     var c = document.getElementById('gameCanvas');
-                     var ctx = c.getContext("2d");
-                     ctx.drawImage(this,0,0,c.width,c.height);
-                     };
-                     bkgrd.src = "images/Concept_Battle_Field_2.jpg";*/
                 }
             
-            function countdown()
-            {
-                var t = document.getElementById('timeout');
-                var r = parseInt(t.innerHTML.substring(3));
-                r--;
-                
-                if(r > -1)
-                {
-                    t.innerHTML = "00:" + (r < 10 ? "0" : "") + r;
-                }
-                else
-                {
-                    clearInterval(intv);
-                    commit();
-                }
-            }
-            
-            function start()
-            {
-                document.querySelector("#titleScreen").classList.toggle("inactive");
-                document.querySelector("#characterSelect").classList.toggle("inactive");
-            }
-            
-            function skipIntro()
-            {
-                clearTimeout(tmrIntro);
-                document.querySelector("#sagaSell").classList.toggle("inactive");
-            }
-            
-            function selectCommit(btn)
-            {
-                btn.classList.toggle("selected");
-                
-                if(player1.isActive())
-                {
-                    player1.commit();
-                    
-                    player1.active = false;
-                    player2.active = true;
-                }
-                else
-                {
-                    player2.commit();
-                    
-                    player2.active = false;
-                    player1.active = true;
-                    
-                    document.querySelector("#characterSelect").classList.toggle("inactive");
-                    loadArena();
-                    
-                    toggleDialog1();
-                    populateDialog1();
-                }
-            }
-            
-            function toggleDialog1()
-            {
-                if(document.querySelector("#characterSelect").classList.contains("inactive"))
-                {
-                    document.querySelector("#dialog1").classList.toggle("inactive");
-                }
-            }
-            
-            function populateDialog1()
-            {
-                intv = setInterval("countdown()", 1000);
-                
-                var p = (player1.isActive() ? player1 : player2);
-                var btns;
-                
-                for(var i = 0; i < p.characters.length; i++)
-                {
-                    p.characters[i].retreat = false;
-                    if(p.characters[i].position == 1 || p.characters[i].position == 2)
-                    {
-                        if(p.characters[i].position == 1)
-                        {
-                            btns = document.querySelectorAll(".active1 button");
-                            document.querySelector("#active_img1").src = "characters/headshots/" + p.characters[i].image;
-                        }
-                        else
-                        {
-                            btns = document.querySelectorAll(".active2 button");
-                            document.querySelector("#active_img2").src = "characters/headshots/" + p.characters[i].image;
-                        }
-                        
-                        for(var j = 0; j < btns.length; j++)
-                        {
-                            p.characters[i].skills[j].selected = false;
-                            
-                            btns[j].innerHTML = p.characters[i].skills[j].name;
-                            
-                            btns[j].onclick = function()
-                            {
-                                var index = -1;
-                                
-                                var btns = this.parentElement.querySelectorAll("button");
-                                for(var k = 0; k < btns.length; k++)
-                                {
-                                    if(btns[k] == this)
-                                    {
-                                        btns[k].classList.add("selected");
-                                        index = k;
-                                    }
-                                    else
-                                    {
-                                        btns[k].classList.remove("selected");
-                                    }
-                                }
-                                
-                                var pos = (this.parentElement.parentElement.classList.contains("active1") ? 1 : 2);
-                                var character = p.getCharacterByPosition(pos);
-                                
-                                if(this.innerHTML == "Retreat")
-                                {
-                                    var s = (pos == 1 ? ".active2" : ".active1") + " button:last-child";
-                                    
-                                    var btn = document.querySelector(s);
-                                    btn.disabled = !character.retreat;
-                                    
-                                    character.retreat = !character.retreat;
-                                    if(!character.retreat)
-                                    {
-                                        this.classList.remove("selected");
-                                    }
-                                    else
-                                    {
-                                        showReady(character, index, pos, -1);
-                                    }
-                                }
-                                else
-                                {
-                                    showSkill(character, index, pos);
-                                }
-                            };
-                        }
-                    }
-                }
-            }
-            
-            function resetDialog1()
-            {
-                var b = document.querySelectorAll(".abilities button");
-                for(var i = 0; i < b.length; i++)
-                {
-                    b[i].disabled = false;
-                    b[i].classList.remove("selected");
-                }
-                
-                var f = document.querySelectorAll(".skillOverlay, .characterReady");
-                for(var i = 0; i < f.length; i++)
-                {
-                    f[i].classList.add("inactive");
-                }
-                
-                clearInterval(intv);
-                document.getElementById('timeout').innerHTML = "00:30";
-                document.querySelector("#btnCommit").disabled = true;
-            }
-            
-            function showSkill(character, index, pos)
-            {
-                var overlay = document.getElementById("skillOverlay" + pos);
-                overlay.classList.toggle("inactive");
-                
-                overlay.querySelector(".skillDesc").innerHTML = character.skills[index].toLog();
-                
-                var btns = overlay.querySelectorAll("button");
-                btns[0].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 1" : (pos == 1 ? "Self" : "Ally 1"));
-                btns[0].onclick = function() { showReady(character, index, pos, 1); };
-                
-                btns[1].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 2" : (pos == 2 ? "Self" : "Ally 2"));
-                btns[1].onclick = function() { showReady(character, index, pos, 2); };
-                
-                btns[2].onclick = function() { overlay.classList.toggle("inactive"); };
-            }
-            
-            function showReady(character, index, pos, target)
-            {
-                character.skills[index].selected = true;
-                character.target = target;
-                
-                var overlay = document.getElementById("characterReady" + pos);
-                overlay.classList.toggle("inactive");
-                overlay.style.backgroundImage = "url('characters/" + character.image + "')";
-                
-                overlay.querySelector(".characterAction").innerHTML = (target != -1
-                   ? character.skills[index].name.toUpperCase() + "<br />"
-                   + (character.skills[index].type == SkillType.Offensive ? "<span>against</span><br />ENEMY " + target : "<span>on</span><br />" + (pos == target  ? "SELF" : "ALLY " + target))
-                   : "RETREAT");
-                                                                       
-                var complete = document.querySelectorAll(".characterReady.inactive");
-                document.querySelector("#btnCommit").disabled = (complete.length != 0);
-                                                                       
-               overlay.querySelector("button").onclick = function()
-               {
-                   character.skills[index].selected = false;
-                   character.target = null;
-                   overlay.classList.toggle("inactive");
-                   
-                   document.querySelector("#btnCommit").disabled = true;
-               };
-            }
-            
-            function commit()
-            {
-                if(player1.isActive())
-                {
-                    player1.getCharacterByPosition(1).setLastAttack();
-                    player1.getCharacterByPosition(2).setLastAttack();
-                    
-                    player1.active = false;
-                    player2.active = true;
-                    
-                    resetDialog1();
-                    populateDialog1();
-                }
-                else
-                {
-                    player2.getCharacterByPosition(1).setLastAttack();
-                    player2.getCharacterByPosition(2).setLastAttack();
-                    
-                    resetDialog1();
-                    toggleDialog1();
-                    
-                    startRound();
-                }
-            }
-            
-            function startRound()
-            {
-                gameLog.flush();
-                
-                for(var i = 0; i < player1.characters.length; i++)
-                {
-                    for(var j = 1; j <= 2; j++)
-                    {
-                        if(player1.characters[i].position == j)
-                        {
-                            gameLog.write("PLAYER1: " + player1.characters[i].name + " " + player1.characters[i].getLastAttack().text);
-                        }
-                        if(player2.characters[i].position == j)
-                        {
-                            gameLog.write("PLAYER2: " + player2.characters[i].name + " " + player2.characters[i].getLastAttack().text);
-                        }
-                    }
-                }
-            }
-            function surrender()
-            {
-                // do something
-            }
-            
-            function expand(lnk)
-            {
-                lnk.parentElement.classList.toggle("minimize");
-            }
-            function debugWrite(text, append)
-            {
-                var t =    document.querySelector("textarea");
-                t.value = (append ? t.value + "\n" : "") + text;
-            }
+				function countdown()
+				{
+					var t = document.getElementById('timeout');
+					var r = parseInt(t.innerHTML.substring(3));
+					r--;
+					
+					if(r > -1)
+					{
+						t.innerHTML = "00:" + (r < 10 ? "0" : "") + r;
+					}
+					else
+					{
+						clearInterval(intv);
+						commit();
+					}
+				}
+				
+				function start()
+				{
+					document.querySelector("#titleScreen").classList.toggle("inactive");
+					document.querySelector("#characterSelect").classList.toggle("inactive");
+				}
+				
+				function skipIntro()
+				{
+					clearTimeout(tmrIntro);
+					document.querySelector("#sagaSell").classList.toggle("inactive");
+				}
+				
+				function selectCommit(btn)
+				{
+					btn.classList.toggle("selected");
+					
+					if(player1.isActive())
+					{
+						player1.commit();
+						
+						player1.active = false;
+						player2.active = true;
+					}
+					else
+					{
+						player2.commit();
+						
+						player2.active = false;
+						player1.active = true;
+						
+						document.querySelector("#characterSelect").classList.toggle("inactive");
+						loadArena();
+						
+						toggleDialog1();
+						populateDialog1();
+					}
+				}
+				
+				function toggleDialog1()
+				{
+					if(document.querySelector("#characterSelect").classList.contains("inactive"))
+					{
+						document.querySelector("#dialog1").classList.toggle("inactive");
+					}
+				}
+				
+				function populateDialog1()
+				{
+					intv = setInterval("countdown()", 1000);
+					
+					var p = (player1.isActive() ? player1 : player2);
+					var btns;
+					
+					for(var i = 0; i < p.characters.length; i++)
+					{
+						p.characters[i].retreat = false;
+						if(p.characters[i].position == 1 || p.characters[i].position == 2)
+						{
+							if(p.characters[i].position == 1)
+							{
+								btns = document.querySelectorAll(".active1 button");
+								document.querySelector("#active_img1").src = "characters/headshots/" + p.characters[i].image;
+							}
+							else
+							{
+								btns = document.querySelectorAll(".active2 button");
+								document.querySelector("#active_img2").src = "characters/headshots/" + p.characters[i].image;
+							}
+							
+							for(var j = 0; j < btns.length; j++)
+							{
+								p.characters[i].skills[j].selected = false;
+								
+								btns[j].innerHTML = p.characters[i].skills[j].name;
+								
+								btns[j].onclick = function()
+								{
+									var index = -1;
+									
+									var btns = this.parentElement.querySelectorAll("button");
+									for(var k = 0; k < btns.length; k++)
+									{
+										if(btns[k] == this)
+										{
+											btns[k].classList.add("selected");
+											index = k;
+										}
+										else
+										{
+											btns[k].classList.remove("selected");
+										}
+									}
+									
+									var pos = (this.parentElement.parentElement.classList.contains("active1") ? 1 : 2);
+									var character = p.getCharacterByPosition(pos);
+									
+									if(this.innerHTML == "Retreat")
+									{
+										var s = (pos == 1 ? ".active2" : ".active1") + " button:last-child";
+										
+										var btn = document.querySelector(s);
+										btn.disabled = !character.retreat;
+										
+										character.retreat = !character.retreat;
+										if(!character.retreat)
+										{
+											this.classList.remove("selected");
+										}
+										else
+										{
+											showReady(character, index, pos, -1);
+										}
+									}
+									else
+									{
+										showSkill(character, index, pos);
+									}
+								};
+							}
+						}
+					}
+				}
+				
+				function resetDialog1()
+				{
+					var b = document.querySelectorAll(".abilities button");
+					for(var i = 0; i < b.length; i++)
+					{
+						b[i].disabled = false;
+						b[i].classList.remove("selected");
+					}
+					
+					var f = document.querySelectorAll(".skillOverlay, .characterReady");
+					for(var i = 0; i < f.length; i++)
+					{
+						f[i].classList.add("inactive");
+					}
+					
+					clearInterval(intv);
+					document.getElementById('timeout').innerHTML = "00:30";
+					document.querySelector("#btnCommit").disabled = true;
+				}
+				
+				function showSkill(character, index, pos)
+				{
+					var overlay = document.getElementById("skillOverlay" + pos);
+					overlay.classList.toggle("inactive");
+					
+					overlay.querySelector(".skillDesc").innerHTML = character.skills[index].toLog();
+					
+					var btns = overlay.querySelectorAll("button");
+					btns[0].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 1" : (pos == 1 ? "Self" : "Ally 1"));
+					btns[0].onclick = function() { showReady(character, index, pos, 1); };
+					
+					btns[1].innerHTML = (character.skills[index].type == SkillType.Offensive ? "Enemy 2" : (pos == 2 ? "Self" : "Ally 2"));
+					btns[1].onclick = function() { showReady(character, index, pos, 2); };
+					
+					btns[2].onclick = function() { overlay.classList.toggle("inactive"); };
+				}
+				
+				function showReady(character, index, pos, target)
+				{
+					character.skills[index].selected = true;
+					character.target = target;
+					
+					var overlay = document.getElementById("characterReady" + pos);
+					overlay.classList.toggle("inactive");
+					overlay.style.backgroundImage = "url('characters/" + character.image + "')";
+					
+					overlay.querySelector(".characterAction").innerHTML = (target != -1
+					   ? character.skills[index].name.toUpperCase() + "<br />"
+					   + (character.skills[index].type == SkillType.Offensive ? "<span>against</span><br />ENEMY " + target : "<span>on</span><br />" + (pos == target  ? "SELF" : "ALLY " + target))
+					   : "RETREAT");
+																		   
+					var complete = document.querySelectorAll(".characterReady.inactive");
+					document.querySelector("#btnCommit").disabled = (complete.length != 0);
+																		   
+				   overlay.querySelector("button").onclick = function()
+				   {
+					   character.skills[index].selected = false;
+					   character.target = null;
+					   overlay.classList.toggle("inactive");
+					   
+					   document.querySelector("#btnCommit").disabled = true;
+				   };
+				}
+				
+				function commit()
+				{
+					if(player1.isActive())
+					{
+						player1.getCharacterByPosition(1).setLastAttack();
+						player1.getCharacterByPosition(2).setLastAttack();
+						
+						player1.active = false;
+						player2.active = true;
+						
+						resetDialog1();
+						populateDialog1();
+					}
+					else
+					{
+						player2.getCharacterByPosition(1).setLastAttack();
+						player2.getCharacterByPosition(2).setLastAttack();
+						
+						resetDialog1();
+						toggleDialog1();
+						
+						startRound();
+					}
+				}
+				
+				function startRound()
+				{
+					gameLog.flush();
+					
+					for(var i = 0; i < player1.characters.length; i++)
+					{
+						for(var j = 1; j <= 2; j++)
+						{
+							if(player1.characters[i].position == j)
+							{
+								gameLog.write("PLAYER1: " + player1.characters[i].name + " " + player1.characters[i].getLastAttack().text);
+							}
+							if(player2.characters[i].position == j)
+							{
+								gameLog.write("PLAYER2: " + player2.characters[i].name + " " + player2.characters[i].getLastAttack().text);
+							}
+						}
+					}
+				}
+				function surrender()
+				{
+					// do something
+				}
+				
+				function expand(lnk)
+				{
+					lnk.parentElement.classList.toggle("minimize");
+				}
+				function debugWrite(text, append)
+				{
+					var t =    document.querySelector("textarea");
+					t.value = (append ? t.value + "\n" : "") + text;
+				}
             </script>
     </head>
     <body>
@@ -360,7 +350,8 @@
             <script src="https://mercsteam.github.io/threejs-testing/Detector.js"></script>
             
             <script>
-                var FLOOR_URL = "https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/textures/floor/steelfloor.jpg"
+                var FLOOR_URL = "https://raw.githubusercontent.com/MercsTeam/threejs-testing/master/textures/floor/steelfloor.jpg";
+				var m1, m2;
 
                 function loadArena()
                 {
@@ -432,16 +423,30 @@
                             ]);
                         }
                         geometry.uvsNeedUpdate = true;
+	
+						m1 = new ActiveMarker(0x33CCFF, -10, -5);
+						scene.add( m1 );
 
                         // add player 1 characters
-                        scene.add(player1.characters[0].createGameObject("IDLE_BACK", geometry, -10, 0, 5));
-                        scene.add(player1.characters[1].createGameObject("IDLE_BACK", geometry, -10, 0, -5));
-                        scene.add(player1.characters[2].createGameObject("IDLE_BACK", geometry, -17, 0, 0));
+                        scene.add(player1.characters[0].createGameObject("IDLE_BACK", geometry, -10, -5));
+                        scene.add(player1.characters[1].createGameObject("IDLE_BACK", geometry, -10, 5));
+                        scene.add(player1.characters[2].createGameObject("IDLE_BACK", geometry, -17, 0));
+
+						scene.add(player1.characters[0].createHealthBar(-10,-5));
+						scene.add(player1.characters[1].createHealthBar(-10,5));
+						scene.add(player1.characters[2].createHealthBar(-17,0));
+
+						m2 = new ActiveMarker(0x999966, 10, 5);
+						scene.add( m2 );
 
                         //add player 2 characters
-                        scene.add(player2.characters[0].createGameObject("SLASH_FRONT", geometry, 10, 0, 5));
-                        scene.add(player2.characters[1].createGameObject("IDLE_FRONT", geometry, 10, 0, -5));
-                        scene.add(player2.characters[2].createGameObject("IDLE_FRONT", geometry, 17, 0, 0));
+                        scene.add(player2.characters[0].createGameObject("SLASH_FRONT", geometry, 10, 5));
+                        scene.add(player2.characters[1].createGameObject("SLASH_FRONT", geometry, 10, -5));
+                        scene.add(player2.characters[2].createGameObject("IDLE_FRONT", geometry, 17, 0));
+
+						scene.add(player2.characters[0].createHealthBar(10,5));
+						scene.add(player2.characters[1].createHealthBar(10,-5));
+						scene.add(player2.characters[2].createHealthBar(17,0));
 
                         // Create lighting.
                         var lightAmbient = new THREE.AmbientLight(0xffffff);
@@ -450,7 +455,7 @@
                         var sphere = new THREE.SphereGeometry(0.5,16,8);
                         
                         var lightMain = new THREE.PointLight(0xffffff, 1.5, 10);
-                        lightMain.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color:0x000000 } ) ) );
+                        lightMain.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color:0xFFFFFF } ) ) );
                         lightMain.translateX(0);
                         lightMain.translateY(10);
                         lightMain.translateZ(0);
@@ -529,6 +534,19 @@
                         }
                     };
                 }
+
+				function ActiveMarker(c, x, z)
+				{
+					var geometry = new THREE.CircleGeometry( 2, 32 );
+					var material = new THREE.MeshBasicMaterial( { color: c } );
+					
+					var circle = new THREE.Mesh( geometry, material );
+					circle.translateX(x);   
+					circle.translateY(-2.4);   
+					circle.translateZ(z);
+					circle.rotation.x = Math.PI * 1.5;
+					return circle;
+				}
             </script>
             
             <div id="titleScreen" onclick="start()">
@@ -635,3 +653,4 @@
             </div>
         </div>
     </body>
+</html>
