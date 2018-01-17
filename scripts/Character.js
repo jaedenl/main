@@ -147,12 +147,13 @@ function Character()
 		this.gameObj.position.y = coords.y;
 		this.gameObj.position.z = coords.z;
 		
-		this.gameObj.position.x = coords.x;
-		this.gameObj.position.y = coords.y;
-		this.gameObj.position.z = coords.z;
+		this.healthbar.position.x = coords.x;
+		this.healthbar.position.y = coords.y + 4;
+		this.healthbar.position.z = coords.z;
 		
 		if(this.marker)
 		{
+			alert("Update marker!");
 			this.marker.setX(coords.x);
                 	this.marker.setY(coords.y - 2.4);
                 	this.marker.setZ(coords.z);
