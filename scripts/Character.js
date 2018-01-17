@@ -97,9 +97,9 @@ function Character()
 		var material = new THREE.MeshLambertMaterial( { map : texture, transparent : true } );
 
 		this.obj = new THREE.Mesh(shape, material);
-		this.obj.translateX(coords.x);   
-		this.obj.translateY(coords.y);   
-		this.obj.translateZ(coords.z);
+		this.obj.position.x = coords.x;   
+		this.obj.position.y = coords.y;   
+		this.obj.position.z = coords.z;
 		this.obj.rotation.y = Math.PI * 1.6;
 		
 		this.charanim = null;
@@ -134,22 +134,22 @@ function Character()
 		var material = new THREE.MeshBasicMaterial( {color: 0x00CC33, side: THREE.DoubleSide} );
 		
 		this.healthbar = new THREE.Mesh( geometry, material );
-		this.healthbar.translateX(coords.x);
-		this.healthbar.translateY(coords.y + 4);
-		this.healthbar.translateZ(coords.z);
+		this.healthbar.position.x = coords.x;
+		this.healthbar.position.y = coords.y + 4;
+		this.healthbar.position.z = coords.z;
 		this.healthbar.rotation.y = Math.PI * 1.6;
 		return this.healthbar;
 	};
 	
 	this.updateGameObject = function(coords)
 	{
-		this.gameObj.translateX(coords.x);
-		this.gameObj.translateX(coords.y);
-		this.gameObj.translateX(coords.z);
+		this.gameObj.position.x = coords.x;
+		this.gameObj.position.y = coords.y;
+		this.gameObj.position.z = coords.z;
 		
-		this.gameObj.translateX(coords.x);
-		this.gameObj.translateX(coords.y);
-		this.gameObj.translateX(coords.z);
+		this.gameObj.position.x = coords.x;
+		this.gameObj.position.y = coords.y;
+		this.gameObj.position.z = coords.z;
 		
 		if(this.marker)
 		{
