@@ -23,15 +23,15 @@ function Retreat()
 			c2.position = 3;
 			c3.position = 1;
 		}
+		
+		var p = 0, coords = nul;
+		for(var i = 0; i < player.characters.length; i++)
+		{
+			p = player.characters[i].position;
+			coords = player.characterCoords[(p == 1 ? "First" : (p == 2 ? "Second" : "Third"))];
+			player.characters[i].updateGameObject(coords);	
+		}
 	};
-
-	/*this.setSelected = function(value) 
-	{ 
-		alert("B: " + this.isSelected()); 
-		selected = value;
-		alert("A: " + this.isSelected()); 
-	};
-	this.isSelected = function() { return selected; };*/
 }
 Retreat.prototype = new Skill("Retreat");
 
