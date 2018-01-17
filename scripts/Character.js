@@ -86,7 +86,7 @@ function Character()
 	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
     };
 
-	this.createGameObject = function(s, shape, x, z)
+	this.createGameObject = function(s, shape, coords)
 	{
 		var state = this.state[s];
 		
@@ -96,9 +96,9 @@ function Character()
 		var material = new THREE.MeshLambertMaterial( { map : texture, transparent : true } );
 
 		this.obj = new THREE.Mesh(shape, material);
-		this.obj.translateX(x);   
-		this.obj.translateY(0);   
-		this.obj.translateZ(z);
+		this.obj.translateX(coords.x);   
+		this.obj.translateY(coords.y);   
+		this.obj.translateZ(coords.z);
 		this.obj.rotation.y = Math.PI * 1.6;
 		
 		this.charanim = null;
@@ -116,15 +116,15 @@ function Character()
 		return this.obj;
 	};
 
-	this.createHealthBar = function(x, z)
+	this.createHealthBar = function(coords)
 	{
 		var geometry = new THREE.PlaneGeometry( 4, 0.5, 32 );
 		var material = new THREE.MeshBasicMaterial( {color: 0x00CC33, side: THREE.DoubleSide} );
 		
 		this.healthbar = new THREE.Mesh( geometry, material );
-		this.healthbar.translateX(x);
-		this.healthbar.translateY(4);
-		this.healthbar.translateZ(z);
+		this.healthbar.translateX(coords.x);
+		this.healthbar.translateY(coords.y + 4);
+		this.healthbar.translateZ(coords.z);
 		this.healthbar.rotation.y = Math.PI * 1.6;
 		return this.healthbar;
 	};
