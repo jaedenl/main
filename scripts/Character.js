@@ -118,6 +118,12 @@ function Character()
 		scene.add(this.createHealthBar(coords));
 		
 		this.marker = marker;
+		if(marker)
+		{
+			this.marker.setX(coords.x);
+			this.marker.setY(coords.y - 2.4);
+			this.marker.setZ(coords.z);
+		}
 		
 		//return this.obj;
 	};
