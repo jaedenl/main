@@ -14,13 +14,14 @@ function Character()
     
     this.name = "";
     this.image = "";
-    this.type = CharacterType.NotSet;
+    this.type = CharacterType.NotSet;    
 
     this.colour = 0x000000;
     this.obj = null;
     this.charanim = null;
     this.state = null;
-	this.healthbar = null;
+    this.healthbar = null;
+    this.marker = null;
     
     this.skills = null;
     this.backstory = "";
@@ -86,7 +87,7 @@ function Character()
 	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
     };
 
-	this.createGameObject = function(scene, sprite, shape, coords)
+	this.createGameObject = function(scene, sprite, shape, coords, marker)
 	{
 		var state = this.state[sprite];
 		
@@ -116,6 +117,8 @@ function Character()
 		scene.add(this.obj);		
 		scene.add(this.createHealthBar(coords));
 		
+		this.marker = marker;
+		
 		//return this.obj;
 	};
 
@@ -130,5 +133,23 @@ function Character()
 		this.healthbar.translateZ(coords.z);
 		this.healthbar.rotation.y = Math.PI * 1.6;
 		return this.healthbar;
+	};
+	
+	this.updateGameObject = function(coords)
+	{
+		this.gameObj.translateX(coords.x);
+		this.gameObj.translateX(coords.y);
+		this.gameObj.translateX(coords.z);
+		
+		this.gameObj.translateX(coords.x);
+		this.gameObj.translateX(coords.y);
+		this.gameObj.translateX(coords.z);
+		
+		if(this.marker)
+		{
+			this.marker.setX(coords.x);
+                	this.marker.setY(coords.y - 2.4);
+                	this.marker.setZ(coords.z);
+		}
 	};
 }
