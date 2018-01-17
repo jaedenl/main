@@ -6,6 +6,13 @@ function Player(a)
 
 	this.selectedCount = 0;
 	this.characters = null;
+	
+	this.characterPosition =
+	{
+		First : null,
+		Second : null,
+		Third : null
+	};
 
 	this.isWinner = function() { return this.winner; };
 	this.isActive = function() { return this.active; };
