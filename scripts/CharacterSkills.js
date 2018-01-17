@@ -24,7 +24,7 @@ function Retreat()
 			c3.position = 1;
 		}
 		
-		var p = 0, coords = nul;
+		var p = 0, coords = null;
 		for(var i = 0; i < player.characters.length; i++)
 		{
 			p = player.characters[i].position;
