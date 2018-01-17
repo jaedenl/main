@@ -86,9 +86,9 @@ function Character()
 	    this.attackHistory.push({ "skill" : skill, "text" : str }); 
     };
 
-	this.createGameObject = function(s, shape, coords)
+	this.createGameObject = function(scene, sprite, shape, coords)
 	{
-		var state = this.state[s];
+		var state = this.state[sprite];
 		
 		var texture  = new THREE.TextureLoader().load(textureBaseURL + state.img);
 		if(state.wrap) texture.wrapS = THREE.RepeatWrapping;
@@ -113,7 +113,10 @@ function Character()
 			);
 		}
 		
-		return this.obj;
+		scene.add(this.obj);		
+		scene.add(this.createHealthBar(coords));
+		
+		//return this.obj;
 	};
 
 	this.createHealthBar = function(coords)
