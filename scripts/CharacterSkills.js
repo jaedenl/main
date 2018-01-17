@@ -7,9 +7,9 @@ function Retreat()
 
 	this.swap = function(player, pos)
 	{
-		var c1 = player.getCharacterByPos(1);
-		var c2 = player.getCharacterByPos(2);
-		var c3 = player.getCharacterByPos(3);
+		var c1 = player.getCharacterByPosition(1);
+		var c2 = player.getCharacterByPosition(2);
+		var c3 = player.getCharacterByPosition(3);
 
 		if(pos == 1)
 		{
