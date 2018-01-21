@@ -82,6 +82,8 @@ function Skill(n)
 				{
 					if(this.type == SkillType.Offensive)
 					{
+						alert("Offensive!!");
+
 						target[i].attack.modifier = this.oppAttackMod;
 						target[i].defence.modifier = this.oppDefenceMod;
 						target[i].speed.modifier = this.oppSpeedMod;

@@ -79,6 +79,10 @@ function Character()
 
 	this.update = function()
 	{
+		if(!this.active) return;
+
+		this.blocksDamage = false;
+
 		var attr = [ this.defence, this.attack, this.speed, this.accuracy ];
 
 		if(this.position == 3)
@@ -178,16 +182,11 @@ function Character()
 	*/
 	this.calculateDamage = function(attacker, bonus)
 	{
-		var damage = 0;
-		if(this.blocksDamage)
-		{
-			this.blocksDamage = false;
-		}
-		else
-		{			
-			damage = ((attacker.attack.base * attacker.attack.modifier) + attacker.getSelectedSkill().attackValue) * bonus - (this.defence.base * this.defence.modifier);
-			//alert(string.format("(({0} * {1}) + {2}) * {3} - ({4} * {5}) = {6}", attacker.attack.base, attacker.attack.modifier, attacker.getSelectedSkill().attackValue, bonus, this.defence.base, this.defence.modifier, damage));
-		}
+		if(this.blocksDamage) return;
+
+		var damage = ((attacker.attack.base * attacker.attack.modifier) + attacker.getSelectedSkill().attackValue) * bonus - (this.defence.base * this.defence.modifier);
+		alert(string.format("(({0} * {1}) + {2}) * {3} - ({4} * {5}) = {6}", attacker.attack.base, attacker.attack.modifier, attacker.getSelectedSkill().attackValue, bonus, this.defence.base, this.defence.modifier, damage));
+
 		return damage;
 	};
 
@@ -246,7 +245,7 @@ function Character()
 	this.updateHealthBar = function()
 	{
 		var width = Math.max(0.001, this.health.base / 200 * 4);
-		var barColor = (width < 1 ? 0xFF0066 : 0x00CC33);
+		var barColor = (width < 1 ? 0xFF2424 : 0x00CC33);
 		
 		this.healthbar.geometry = new THREE.PlaneGeometry( width, 0.5, 32 );
 		this.healthbar.material = new THREE.MeshBasicMaterial( {color: barColor, side: THREE.DoubleSide} );
