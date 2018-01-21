@@ -321,7 +321,8 @@
             
             function startRound()
             {
-                gameLog.flush();
+                //gameLog.flush();
+				gameLog.write(string.format("ROUND {0} - FIGHT!!\n========================", round));
                 
 				var attackers = [];
                 
@@ -330,11 +331,11 @@
                     for(var j = 1; j <= 2; j++)
                     {
                         //log attacks
-                        if(player1.characters[i].position == j)
+                        if(player1.characters[i].position == j && player1.characters[i].active)
                         {
                             gameLog.write(string.format("PLAYER1: {0} {1}", player1.characters[i].name, player1.characters[i].getLastAttack().text));
                         }
-                        if(player2.characters[i].position == j)
+                        if(player2.characters[i].position == j && player2.characters[i].active)
                         {
                             gameLog.write(string.format("PLAYER2: {0} {1}", player2.characters[i].name, player2.characters[i].getLastAttack().text));
                         }
@@ -344,55 +345,62 @@
                 for(var i = 0; i < CHARACTERS_PER_TEAM; i++)
                 {
 					p1 = player1.characters[i];
-					s1 = p1.getSelectedSkill();
-                    if(p1.retreat)
-                    {
-                        s1.doAction(player1, p1.position);
-                    }
-					else if(s1)
-					{						
-						if(s1.type == SkillType.Offensive)
+					if(p1.active)
+					{
+						s1 = p1.getSelectedSkill();
+						if(p1.retreat)
 						{
-							attackers.push({ character : p1, opponent : player2 });
+							s1.doAction(player1, p1.position);
 						}
-						else
-						{
-							if(s1.multiTarget)
+						else if(s1)
+						{						
+							if(s1.type == SkillType.Offensive)
 							{
-								s1.doAction(p1, [ player1.getCharacterByPosition(1), player1.getCharacterByPosition(2) ]);
+								attackers.push({ character : p1, opponent : player2 });
 							}
 							else
 							{
-								s1.doAction(p1, [ player1.getCharacterByPosition(p1.target) ]);
+								if(s1.multiTarget)
+								{
+									s1.doAction(p1, [ player1.getCharacterByPosition(1), player1.getCharacterByPosition(2) ]);
+								}
+								else
+								{
+									s1.doAction(p1, [ player1.getCharacterByPosition(p1.target) ]);
+								}
 							}
 						}
 					}
                     
 					p2 = player2.characters[i];
-					s2 = p2.getSelectedSkill();
-					if(p2.retreat)
-                    {
-                        s2.doAction(player2, p2.position);
-                    }
-					else if(s2)
-					{						
-						if(s2.type == SkillType.Offensive)
+					if(p2.active)
+					{
+						s2 = p2.getSelectedSkill();
+						if(p2.retreat)
 						{
-							attackers.push({ character : p2, opponent : player1 });
+							s2.doAction(player2, p2.position);
 						}
-						else
-						{
-							if(s2.multiTarget)
+						else if(s2)
+						{						
+							if(s2.type == SkillType.Offensive)
 							{
-								s2.doAction(p2, [ player2.getCharacterByPosition(1), player2.getCharacterByPosition(2) ]);
+								attackers.push({ character : p2, opponent : player1 });
 							}
 							else
 							{
-								s2.doAction(p2, [ player2.getCharacterByPosition(p2.target) ]);
+								if(s2.multiTarget)
+								{
+									s2.doAction(p2, [ player2.getCharacterByPosition(1), player2.getCharacterByPosition(2) ]);
+								}
+								else
+								{
+									s2.doAction(p2, [ player2.getCharacterByPosition(p2.target) ]);
+								}
 							}
 						}
 					}
                 }
+				//alert("# Attackers: " + attackers.length);
 				
 				//randomize attackers
 				attackers.sort(function() { return 0.5 - Math.random(); });
@@ -412,6 +420,8 @@
 					}
 					else
 					{
+						//alert(string.format("{0}.position[{1}] attacks {2}.position[{3}]\nSkill {4}", (o == player2 ? "player1" : "player2"), c.position, (o == player2 ? "player2" : "player1"), c.target, s.name));
+						alert(string.format("{0}.position[{1}]: attack mod {2}", (o == player2 ? "player1" : "player2"), c.position, c.attack.modifier));
 						s.doAction(attackers[i].character, [ o.getCharacterByPosition(c.target) ]);
 					}
 				}
@@ -421,18 +431,21 @@
 					player1.characters[i].update();
 					player2.characters[i].update();
 
-					alert(string.format("Player1[{0}] health = {1}\nPlayer2[{0}] health = {2}", i, player1.characters[i].health.base, player2.characters[i].health.base));
+					 alert(string.format("Player1[{0}] health = {1}\nPlayer2[{0}] health = {2}", i, player1.characters[i].health.base, player2.characters[i].health.base));
 				}
 
 				setTimeout(function()
 				{
+					alert(string.format("Player1: {0} vs Player2: {1}", player1.activeCharacterCount, player1.activeCharacterCount));
 					if(player1.activeCharacterCount == 0)
 					{
 						alert("Player 2 Wins!");
+						gameLog.write("PLAYER 2 WINS!");
 					}
 					else if(player2.activeCharacterCount == 0)
 					{
 						alert("Player 1 Wins!");
+						gameLog.write("PLAYER 1 WINS!");
 					}
 					else if(confirm("Next round?"))
 					{
@@ -441,6 +454,8 @@
 
 						populateDialog1();
 						toggleDialog1();
+
+						round++;
 					}
 				},2500);
             }
