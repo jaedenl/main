@@ -18,7 +18,15 @@ function BigSwordGuy()
 		SLASH_FRONT : { img : "bigswordguy/slash.front.png", wrap : false, animate : { hor : 30, vert : 1, num : 30, dur : 33 } }	    
     };
 
-    this.backstory = "Once a peaceful farmer, forced to take up the sword to defend his family and livelihood.  Hobbe quickly found out he was a better bladesman than farmer, and found work in the village as a sellsword."
+	this.health = { base : 200, modifier : 1.0  };
+    
+	this.defence = { base : 50, modifier : 1.0, duration : -1 };
+    this.attack = { base : 50, modifier : 1.0, duration : -1 };
+    this.speed = { base : 100, modifier : 1.0, duration : -1 };
+	
+	this.accuracy = { modifier : 1.0, duration : -1 };
+
+    this.backstory = "A simple man with simple origins. A peaceful farmer forced to take up the sword to defend his family and livelihood. Big sword guy quickly found out he was a better swordsman than farmer, and began working as a sword for hire."
 }
 BigSwordGuy.prototype = new Character();
 

@@ -5,31 +5,46 @@ function Retreat()
 	this.type = SkillType.Reusable;
 	this.description = "Causes character to rotate into inactive position.";
 
-	this.swap = function(player, pos)
+	this.doAction = function(player, pos)
 	{
 		var c1 = player.getCharacterByPosition(1);
 		var c2 = player.getCharacterByPosition(2);
 		var c3 = player.getCharacterByPosition(3);
 
-		if(pos == 1)
+		if(c3.active)
 		{
-			c1.position = 3;
-			c2.position = 1;
-			c3.position = 2;
-		}
-		else
-		{
-			c1.position = 2;
-			c2.position = 3;
-			c3.position = 1;
-		}
-		
-		var p = 0, coords = null;
-		for(var i = 0; i < player.characters.length; i++)
-		{
-			p = player.characters[i].position;
-			coords = player.characterCoords[(p == 1 ? "First" : (p == 2 ? "Second" : "Third"))];
-			player.characters[i].updateGameObject(coords);	
+			if(pos == 1)
+			{
+				c1.position = 3;
+				c2.position = 1;
+				c3.position = 2;
+
+				if(c2.burned)
+				{
+					c2.health.modifier = 0.90;
+					c2.defence.modifier = 0.5;
+				}
+			}
+			else
+			{
+				c1.position = 2;
+				c2.position = 3;
+				c3.position = 1;
+
+				if(c1.burned)
+				{
+					c1.health.modifier = 0.90;
+					c1.defence.modifier = 0.5;
+				}
+			}
+			
+			var p = 0, coords = null;
+			for(var i = 0; i < player.characters.length; i++)
+			{
+				p = player.characters[i].position;
+				coords = player.characterCoords[(p == 1 ? "First" : (p == 2 ? "Second" : "Third"))];
+				player.characters[i].updateGameObject(coords);	
+			}
 		}
 	};
 }
@@ -64,7 +79,6 @@ function Focus()
 {
     this.type = SkillType.Reusable;
     this.selfAttackMod = 1.5;
-    this.duration = -1;
     this.description = "Strengthens the attack stat (+50%) until big sword guy is swapped to an inactive state, or dies.";
 }
 Focus.prototype = new Skill("Focus");
@@ -102,6 +116,11 @@ function Camouflage()
     this.oppAccuracyMod = 0.5;
     this.duration = 3;
     this.description = "Become harder to hit (50% chance attacks will miss) for next three turns. Effect is lost when Headshot or Ricochet Shot is used.";
+
+	this.doAction = function(self, target)
+	{
+		//to do
+	}
 }
 Camouflage.prototype = new Skill("Camouflage");
 
@@ -155,7 +174,7 @@ function CloudBarrier()
     this.type = SkillType.Defensive;
     this.selfDefenseMod = 1.25;
     this.selfImmunity = true;
-    this.description = "Surrounds himself in protective clouds, increasing defense (+25%) and receives the immunity buff.";
+    this.description = "Surrounds himself in protective clouds, increasing defence (+25%) and receives the immunity buff.";
 }
 CloudBarrier.prototype = new Skill("Cloud Barrier");
 
@@ -165,7 +184,20 @@ function HighWinds()
     this.allySpeedMod = 1.5;
     this.oppSpeedMod = 0.5;
     this.duration = 4;
+	this.multiTarget = true;
     this.description = "Summons high winds across the battlefield, increasing the speed of allies(+50%) and reducing the speed of enemies (-50%). Lasts 3-5 rounds.";
+
+	this.doAction = function(self, target)
+	{
+		self.getAlly().speed.modifier = this.allySpeedMod;
+		self.getAlly().speed.duration = this.duration;
+
+		for(var i = 0; i < target.length; i++) 
+		{
+			target[i].speed.modifier = this.oppSpeedMod;
+			target[i].speed.duration = this.duration;
+		}
+	};
 }
 HighWinds.prototype = new Skill("High Winds");
 
@@ -185,7 +217,7 @@ function IntegratedBattleSystem()
 {
     this.type = SkillType.Offensive;
     this.attackValue = 50;
-    this.randomRebuffProb = -0.25;
+    this.randomDebuffProb = 0.25;
     this.description = "Deals medium damage and has a chance to apply a random debuff (-25%) to the target.";
 }
 IntegratedBattleSystem.prototype = new Skill("Integrated Battle System");
@@ -206,6 +238,14 @@ function NanobotRepairs()
     this.selfDefenseMod = 1.1;
     this.duration = 2;
     this.description = "Repairs damage to his armour, and adapts it to the situation. This skill regenerates a moderate amount of HP (+50 HP) over two turns, and increases defence (+10%) with each use.";
+
+	this.doAction = function(self, target)
+	{
+		self.health.base += 50;
+
+		self.defence.modifier = 1.1;
+		self.defence.duration = 2;
+	}
 }
 NanobotRepairs.prototype = new Skill("Nanobot Repairs");
 
@@ -220,5 +260,10 @@ function PassiveEffect()
     {
         active = (hp < 20 ? true : false);
     };
+
+	this.doAction = function(self, target)
+	{
+		//to do
+	}
 }
 PassiveEffect.prototype = new Skill("Passive Effect");

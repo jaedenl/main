@@ -9,6 +9,8 @@ function Player(a)
 	this.characters = null;	
 	this.characterCoords = null;
 
+	this.activeCharacterCount = CHARACTERS_PER_TEAM;
+
 	this.isWinner = function() { return this.winner; };
 	this.isActive = function() { return this.active; };
 
@@ -16,7 +18,9 @@ function Player(a)
 	{
 		if(!this.characters) this.characters = [];
 
-		this.characters.push(new c());
+		var add = new c();
+		add.player = this;
+		this.characters.push(add);
 	};
 
 	this.removeCharacter = function(c)
