@@ -7,11 +7,7 @@ function getTypeBonus(t1, t2)
 	{
 		return TypeBonus.None;
 	}
-	else if(t1 == CharacterType.Physical && t2 == CharacterType.Finesse)
-	{
-		return TypeBonus.Effective;
-	}
-	else if(t1 == CharacterType.Finesse && t2 == CharacterType.Magic)
+	else if((t1 == CharacterType.Physical && t2 == CharacterType.Finesse) || (t1 == CharacterType.Finesse && t2 == CharacterType.Magic))
 	{
 		return TypeBonus.Effective;
 	}
@@ -45,7 +41,9 @@ function Character()
     
     this.name = "";
     this.image = "";
-    this.type = CharacterType.NotSet;    
+    this.type = CharacterType.NotSet;   
+	
+	this.defeatImage = "";
 
     this.colour = 0x000000;
     this.obj = null;
@@ -113,10 +111,12 @@ function Character()
 			{
 				if(attr[i].duration > 0) 
 				{
+					//alert(attr[i] + " decrements.");
 					attr[i].duration--;
 				}
 				if(attr[i].duration == 0) 
 				{
+					//alert(attr[i] + " resets.");
 					attr[i].modifier = 1.0;
 					attr[i].duration = -1;
 				}
@@ -127,6 +127,8 @@ function Character()
 			{
 				this.active = false;
 				this.skills[4].doAction(this.player, this.position);
+
+				skillImgArr.push({ player : this.player, label : string.format("Player {0}.{1} - {2}<br />DEFEATED", (this.player == player1 ? 1 : 2), this.position, this.name), url : this.defeatImage });
 
 				this.player.activeCharacterCount--;
 			}
@@ -185,7 +187,7 @@ function Character()
 		if(this.blocksDamage) return;
 
 		var damage = ((attacker.attack.base * attacker.attack.modifier) + attacker.getSelectedSkill().attackValue) * bonus - (this.defence.base * this.defence.modifier);
-		alert(string.format("(({0} * {1}) + {2}) * {3} - ({4} * {5}) = {6}", attacker.attack.base, attacker.attack.modifier, attacker.getSelectedSkill().attackValue, bonus, this.defence.base, this.defence.modifier, damage));
+		//alert(string.format("(({0} * {1}) + {2}) * {3} - ({4} * {5}) = {6}", attacker.attack.base, attacker.attack.modifier, attacker.getSelectedSkill().attackValue, bonus, this.defence.base, this.defence.modifier, damage));
 
 		return damage;
 	};

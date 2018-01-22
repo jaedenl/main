@@ -55,6 +55,7 @@ function SwordChop()
     this.type = SkillType.Offensive;
     this.attackValue = 70;
     this.description = "Single target attack that deals damage.";
+	this.imageURL = "characters/BSGComicStills/FRONT-Sword_Chop.jpg";
 }
 SwordChop.prototype = new Skill("Sword Chop");
 
@@ -64,6 +65,7 @@ function SweepingStrike()
     this.attackValue = 50;
     this.description = "AoE attack hitting both active enemy mercs.";
     this.multiTarget = true;
+	this.imageURL = "characters/BSGComicStills/FRONT-Sweeping_Strike.jpg";
 }
 SweepingStrike.prototype = new Skill("Sweeping Strike");
 
@@ -72,6 +74,7 @@ function DefensiveStance()
     this.type = SkillType.Defensive;
     this.description = "Blocks incoming damage for the round.";
     this.blocksDamage = true;
+	this.imageURL = "characters/BSGComicStills/FRONT-Defensive_Stance.jpg";
 }
 DefensiveStance.prototype = new Skill("Defensive Stance");
 
@@ -80,6 +83,7 @@ function Focus()
     this.type = SkillType.Reusable;
     this.selfAttackMod = 1.5;
     this.description = "Strengthens the attack stat (+50%) until big sword guy is swapped to an inactive state, or dies.";
+	this.imageURL = "characters/BSGComicStills/FRONT-Focus.jpg";
 }
 Focus.prototype = new Skill("Focus");
 

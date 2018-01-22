@@ -26,7 +26,8 @@ function BigSwordGuy()
 	
 	this.accuracy = { modifier : 1.0, duration : -1 };
 
-    this.backstory = "A simple man with simple origins. A peaceful farmer forced to take up the sword to defend his family and livelihood. Big sword guy quickly found out he was a better swordsman than farmer, and began working as a sword for hire."
+    this.backstory = "A simple man with simple origins. A peaceful farmer forced to take up the sword to defend his family and livelihood. Big sword guy quickly found out he was a better swordsman than farmer, and began working as a sword for hire.";
+	this.defeatImage = "characters/BSGComicStills/FRONT-Defeat.jpg";
 }
 BigSwordGuy.prototype = new Character();
 
