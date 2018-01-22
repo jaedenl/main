@@ -156,3 +156,26 @@ textarea { font-size:12pt;padding:2px;height:auto;background-color:#000000;color
 
 a { display:block;font-size:28pt;margin:0;padding:0;background:red;text-decoration:none;padding:2%; }
 nav a { padding:4% 2%;margin:2% 0; }
+
+#imgViewer
+{
+	visibility:hidden;
+	position:absolute;
+	top:10%;left:10%;
+
+	background-color:rgba(0,0,0,0.7);
+	padding:3%;	
+	
+	height:calc(80% - 100px);
+	width:calc(80% - 100px);
+	
+	background-size:100%;
+	background-repeat:no-repeat;
+}
+#imgViewer span { font-size:xx-large;font-weight:bold;display:inline-block;width:100%; }
+
+.p1-skillImg { border:solid 4px #33CCFF; }
+.p1-skillImg span { text-align:left;color:#33CCFF; }
+
+.p2-skillImg { border:solid 4px #999966 }
+.p2-skillImg span { text-align:right;color:#999966 }
